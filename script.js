@@ -118,6 +118,22 @@ function renderTasks(tasks){
 // initial render with sample tasks
 renderTasks(sampleTasks);
 
+// Update the header date dynamically so it always shows today's day and date
+function updateHeaderDate() {
+  const headerDateEl = document.querySelector('.top-right .date');
+  if (!headerDateEl) return;
+  const now = new Date();
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayName = days[now.getDay()];
+  const dd = String(now.getDate()).padStart(2, '0');
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const yyyy = now.getFullYear();
+  headerDateEl.innerHTML = `${dayName} <span>${dd}/${mm}/${yyyy}</span>`;
+}
+
+// call it once on load
+updateHeaderDate();
+
 /* -------------------------
   Google Sheets connection examples
 

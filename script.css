@@ -5,6 +5,7 @@
   --muted:#9aa4b2;
   --shadow: 0 6px 18px rgba(17,24,39,0.08);
   --radius:12px;
+  --nav-radius:8px; /* rounded corner used by nav buttons and sidebar */
   --gap:18px;
   --max-width:1200px;
   --font-stack: "Helvetica Neue", Arial, system-ui, -apple-system;
@@ -15,30 +16,42 @@ html,body{height:100%}
 body{
   margin:0;
   font-family:var(--font-stack);
-  background:linear-gradient(180deg, #4b4b4b 0, #4b4b4b 48px, transparent 48px);
+  /* single unified page background — no dark header strip */
+  background: var(--bg);
   color:#111827;
   -webkit-font-smoothing:antialiased;
 }
 
 .app{
-  max-width:1200px;
-  margin:28px auto;
-  background:var(--bg);
-  border-radius:6px;
+  /* fluid layout: span most of the viewport and adapt to any width */
+  width:100%;
+  max-width:none;
+  padding:20px; /* breathing room around the app */
+  margin:0 auto 28px;
+  /* make the app visually part of the page — no white box / heavy shadow */
+  background: transparent;
+  border-radius:0;
   display:grid;
-  grid-template-columns:260px 1fr;
-  overflow:hidden;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  /* responsive column sizing: sidebar uses a flexible clamp so it scales with viewport
+     fallbacks to a sensible min and max width rather than being fixed at 260px */
+  grid-template-columns: clamp(160px, 18vw, 260px) 1fr;
+  min-height: calc(100vh - 56px);
+  align-items: stretch;
+  overflow: visible;
+  box-shadow: none;
 }
 
 /* SIDEBAR */
 .sidebar{
-  background:var(--accent);
+  /* keep the sidebar color but soften it so the app appears as a single page */
+  background: linear-gradient(180deg, #ff6b6b 0%, #ff8f8f 100%);
   color:#fff;
   padding:22px;
+  border-radius: var(--nav-radius) 0 0 var(--nav-radius);
   display:flex;
   flex-direction:column;
   gap:18px;
+  height:100%;
 }
 .profile{
   display:flex;
@@ -56,19 +69,23 @@ body{
 .profile-info .email{font-size:12px;opacity:.9}
 .nav{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .nav-item{
-  background:transparent;border:0;padding:10px;border-radius:8px;color:#fff;text-align:left;
-  cursor:pointer;font-weight:600;opacity:.95;
+  position:relative;
+  background:transparent;border:0;padding:10px;border-radius:var(--nav-radius);color:#fff;text-align:left;
+  cursor:pointer;font-weight:600;opacity:.95;display:flex;align-items:center;gap:10px;
 }
+
+.nav-icon{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;color:inherit;flex-shrink:0}
+.nav-icon .icon{display:block;width:18px;height:18px}
 .nav-item.active{
   background:#fff;color:var(--accent);box-shadow:var(--shadow)
 }
-.logout{margin-top:auto;padding:14px;border-radius:8px;background:rgba(255,255,255,0.06);text-align:center}
+.logout{margin-top:auto;padding:14px;border-radius:var(--nav-radius);background:rgba(255,255,255,0.06);text-align:center}
 
 /* MAIN */
-.main{padding:18px 22px 36px 32px}
+.main{padding:18px 22px 36px 32px; display:flex; flex-direction:column; height:100%}
 .topbar{
   display:flex;align-items:center;justify-content:space-between;
-  border-radius:8px;padding:10px 14px;margin-bottom:18px;background:transparent;
+  border-radius:var(--nav-radius);padding:10px 14px;margin-bottom:18px;background:transparent;
 }
 .brand{font-size:20px;font-weight:700}
 .brand-color{color:var(--accent)}
@@ -87,23 +104,24 @@ body{
 .member{width:34px;height:34px;border-radius:6px;background:#e6eef6;display:flex;align-items:center;justify-content:center;font-weight:700}
 
 /* GRID */
-.content-grid{display:flex;gap:18px}
-.left-column{flex:1}
-.right-column{width:320px;display:flex;flex-direction:column;gap:12px}
+.content-grid{display:flex;gap:18px;align-items:stretch;flex:1}
+.left-column{flex:1;display:flex;flex-direction:column;gap:18px}
+.right-column{flex:0 0 clamp(220px, 22vw, 360px);display:flex;flex-direction:column;gap:12px}
 
 /* Cards */
 .card{
-  background:var(--card);
-  border-radius:var(--radius);
+  /* soften card contrast so it blends into the single-page look */
+  background: rgba(255,255,255,0.6);
+  border-radius:6px;
   padding:14px;
-  box-shadow:var(--shadow);
+  box-shadow: 0 4px 12px rgba(17,24,39,0.04);
 }
 .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .card-header h3{margin:0}
-.card-header button{background:transparent;border:1px dashed #e6eef6;padding:6px 10px;border-radius:8px;cursor:pointer}
+.card-header button{background:transparent;border:1px dashed #e6eef6;padding:6px 10px;border-radius:var(--nav-radius);cursor:pointer}
 
 /* Task list */
-.task-list{display:flex;flex-direction:column;gap:12px}
+.task-list{display:flex;flex-direction:column;gap:12px;overflow:auto}
 .task{
   display:flex;gap:12px;padding:12px;border-radius:10px;border:1px solid #eef2f6;background:#fff;
   align-items:flex-start;
@@ -116,7 +134,7 @@ body{
 
 /* Completed list */
 .completed-list{display:flex;flex-direction:column;gap:10px}
-.completed-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;border:1px solid #f1f4f7}
+.completed-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:var(--nav-radius);border:1px solid #f1f4f7}
 .completed-item .info{flex:1;padding-right:10px}
 .completed-item h5{margin:0;font-size:14px}
 .completed-item p{margin:0;font-size:12px;color:var(--muted)}
@@ -137,8 +155,51 @@ body{
 
 /* Responsive */
 @media (max-width:980px){
-  .app{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .right-column{width:auto}
-  .search-area input{width:220px}
+  /* keep sidebar visible on smaller screens but compact it */
+  .app{grid-template-columns: clamp(90px, 22vw, 220px) 1fr; padding:12px}
+  .sidebar{padding:12px;gap:10px}
+  .avatar{width:44px;height:44px;font-size:14px}
+  .profile-info .name{font-size:14px}
+  .profile-info .email{font-size:11px}
+  .nav-item{padding:8px;font-size:14px}
+  .right-column{flex:0 0 clamp(160px, 30vw, 320px)}
+  .search-area input{width:160px}
+}
+
+/* very narrow screens (phones) — tighten spacing further */
+@media (max-width:520px){
+  .app{grid-template-columns: clamp(72px, 30vw, 180px) 1fr; padding:8px}
+  .sidebar{padding:8px;gap:8px}
+  .avatar{width:36px;height:36px;font-size:13px}
+  .profile-info .name{font-size:13px}
+  .profile-info .email{font-size:10px}
+  .nav-item{padding:6px;font-size:13px}
+  .search-area input{width:120px}
+  .right-column{display:none} /* optional: hide right column on very small screens to prioritize main content */
+
+  /* ICON-ONLY sidebar mode on very narrow screens */
+  .nav{align-items:center}
+  .nav-item{padding:8px;width:44px;height:44px;justify-content:center;border-radius:var(--nav-radius)}
+  /* show the inline SVG icon and hide the text label */
+  .nav-item .nav-icon{display:inline-flex}
+  .nav-item .nav-text{display:none}
+
+  /* compact profile info to avatar only */
+  .profile{align-items:center;gap:8px}
+  .profile-info{display:none}
+  .logout{padding:10px;border-radius:var(--nav-radius);width:44px;text-align:center}
+}
+
+/* Make content panels share vertical space on larger screens */
+@media (min-width:981px){
+  .left-column .card.to-do{flex:1;display:flex;flex-direction:column;min-height:320px}
+  .left-column .card.to-do .task-list{flex:1;overflow:auto}
+  .right-column .status-card{flex:1;display:flex;flex-direction:column}
+  .right-column .status-card .status-row{flex:1;align-items:center}
+  .right-column .completed-card{flex:0.6}
+}
+
+/* very wide screens: keep the layout centered instead of stretching indefinitely */
+@media (min-width:1400px){
+  .app{max-width:1400px;margin:28px auto}
 }
