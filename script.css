@@ -7,8 +7,53 @@
   --radius:12px;
   --nav-radius:8px; /* rounded corner used by nav buttons and sidebar */
   --gap:18px;
+  /* avatar sizes (explicit pixels to prevent subpixel/zoom distortion) */
+  --avatar-size-desktop:45px;
+  --avatar-size-md:44px;
+  --avatar-size-sm:36px;
   --max-width:1200px;
   --font-stack: "Helvetica Neue", Arial, system-ui, -apple-system;
+}
+
+/* avatar tooltip (shows on hover and focus) */
+/* tooltip attached to the .profile container so it's not clipped by .avatar overflow */
+.profile{position:relative}
+.profile .avatar-tooltip{
+  position:absolute;
+  /* default fallback; JS will compute exact left/top based on avatar position */
+  left:0;
+  top:auto;
+  bottom:calc(100% + 8px);
+  transform: translateY(6px);
+  opacity:0;
+  pointer-events:none;
+  background:rgba(0,0,0,0.82);
+  color:#fff;
+  padding:8px 10px;
+  border-radius:8px;
+  font-size:12px;
+  /* allow wrapping so long emails or long content break across lines on small screens */
+  white-space:normal;
+  word-break:break-word;
+  text-align:center;
+  max-width:var(--avatar-tooltip-max,220px);
+  box-shadow:0 8px 24px rgba(16,24,40,0.16);
+  transition:opacity 120ms ease, transform 140ms ease;
+  z-index:40;
+}
+
+.profile:hover .avatar-tooltip,
+.profile:focus-within .avatar-tooltip,
+.profile.tooltip-visible .avatar-tooltip{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(0);
+}
+
+@media (max-width:520px){
+  /* on phones allow wider tooltips (as percent of viewport) and wrapping */
+  .profile .avatar-tooltip{left:0; top:auto; bottom:calc(100% + 10px); transform: translateY(6px); max-width: min(70vw, 300px);}
+  .profile:hover .avatar-tooltip, .profile:focus-within .avatar-tooltip, .profile.tooltip-visible .avatar-tooltip{transform:translateY(0)}
 }
 
 *{box-sizing:border-box}
@@ -60,17 +105,37 @@ body{
   margin-bottom:6px;
 }
 .avatar{
-  width:60px;height:60px;border-radius:50%;
-  background:rgba(255,255,255,0.18);
-  display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:18px;
+  /* Use explicit width+height values to avoid sub-pixel rounding issues
+     that can produce ovals during zoom. These are overridden by breakpoints. */
+  width: var(--avatar-size-desktop);
+  height: var(--avatar-size-desktop);
+  /* lock to explicit bounds to avoid subpixel rounding/zoom artifacts */
+  min-width: var(--avatar-size-desktop);
+  min-height: var(--avatar-size-desktop);
+  max-width: var(--avatar-size-desktop);
+  max-height: var(--avatar-size-desktop);
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* keep content from overflowing and distorting shape */
+  font-weight:700;
+  font-size: 15px;
+  line-height: 1;
+  text-transform: uppercase;
+  /* rendering hints to avoid odd subpixel behaviour when zooming */
+  -webkit-font-smoothing: antialiased;
+  backface-visibility: hidden;
+  position:relative; /* needed for tooltip */
+  transform: translateZ(0);
 }
 .profile-info .name{font-weight:700}
-.profile-info .email{font-size:12px;opacity:.9}
+.profile-info .email{font-size:12px;opacity:.9;display:none}
 .nav{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .nav-item{
   position:relative;
-  background:transparent;border:0;padding:10px;border-radius:var(--nav-radius);color:#fff;text-align:left;
+  background:transparent;border:0;padding:5px;border-radius:var(--nav-radius);color:#fff;text-align:left;
   cursor:pointer;font-weight:600;opacity:.95;display:flex;align-items:center;gap:10px;
 }
 
@@ -158,7 +223,7 @@ body{
   /* keep sidebar visible on smaller screens but compact it */
   .app{grid-template-columns: clamp(90px, 22vw, 220px) 1fr; padding:12px}
   .sidebar{padding:12px;gap:10px}
-  .avatar{width:44px;height:44px;font-size:14px}
+  .avatar{width:var(--avatar-size-md); height:var(--avatar-size-md); min-width:var(--avatar-size-md); min-height:var(--avatar-size-md); max-width:var(--avatar-size-md); max-height:var(--avatar-size-md); font-size:14px}
   .profile-info .name{font-size:14px}
   .profile-info .email{font-size:11px}
   .nav-item{padding:8px;font-size:14px}
@@ -170,7 +235,7 @@ body{
 @media (max-width:520px){
   .app{grid-template-columns: clamp(72px, 30vw, 180px) 1fr; padding:8px}
   .sidebar{padding:8px;gap:8px}
-  .avatar{width:36px;height:36px;font-size:13px}
+  .avatar{width:var(--avatar-size-sm); height:var(--avatar-size-sm); min-width:var(--avatar-size-sm); min-height:var(--avatar-size-sm); max-width:var(--avatar-size-sm); max-height:var(--avatar-size-sm); font-size:13px}
   .profile-info .name{font-size:13px}
   .profile-info .email{font-size:10px}
   .nav-item{padding:6px;font-size:13px}

@@ -1,43 +1,7 @@
 // script.js - renders tasks and status donuts and includes examples for Google Sheets fetching
 
-const sampleTasks = [
-  {
-    id: 1,
-    title: "Attend Nischal's Birthday Party",
-    description: "Buy gifts on the way and pick up cake from bakery. (6 PM | Fresh Elements)",
-    priority: "Moderate",
-    status: "Not Started",
-    created: "20/06/2023",
-    image: ""
-  },
-  {
-    id: 2,
-    title: "Landing Page Design for TravelDays",
-    description: "Get the work done by EOD and discuss with client before leaving. (4 PM | Meeting Room)",
-    priority: "Moderate",
-    status: "In Progress",
-    created: "20/06/2023",
-    image: ""
-  },
-  {
-    id: 3,
-    title: "Presentation on Final Product",
-    description: "Make sure everything is functioning and all necessities are prepared",
-    priority: "Moderate",
-    status: "In Progress",
-    created: "19/06/2023",
-    image: ""
-  },
-  {
-    id: 4,
-    title: "Walk the dog",
-    description: "Take the dog to the park and bring treats as well",
-    priority: "Low",
-    status: "Completed",
-    created: "18/06/2023",
-    image: ""
-  }
-];
+// start with an empty list — the UI will show only the To-Do header and Add task button
+const sampleTasks = [];
 
 const taskListEl = document.getElementById('taskList');
 const completedListEl = document.getElementById('completedList');
@@ -115,7 +79,7 @@ function renderTasks(tasks){
 
 }
 
-// initial render with sample tasks
+// initial render: no tasks by default so the To-Do card is empty and only shows header/button
 renderTasks(sampleTasks);
 
 // Update the header date dynamically so it always shows today's day and date
@@ -133,6 +97,164 @@ function updateHeaderDate() {
 
 // call it once on load
 updateHeaderDate();
+
+// set avatar initials and welcome first name based on the profile name in the sidebar
+function syncProfileDisplay(){
+  const nameEl = document.querySelector('.profile .name');
+  const avatarEl = document.querySelector('.profile .avatar');
+  const welcomeNameEl = document.querySelector('.welcome-name');
+  if(!nameEl) return;
+
+  const full = String(nameEl.textContent || '').trim();
+  if(!full) return;
+  const parts = full.split(/\s+/);
+  const firstName = parts[0] || full;
+
+  // initials: first char of first and last (if present)
+  let initials = '';
+  if(parts.length === 1){
+    initials = (parts[0][0] || '').toUpperCase();
+  } else {
+    initials = ((parts[0][0] || '') + (parts[parts.length-1][0] || '')).toUpperCase();
+  }
+
+  if(avatarEl) avatarEl.textContent = initials;
+  // make avatar focusable + create tooltip with email (hide the visible email in the sidebar)
+  const emailEl = document.querySelector('.profile .email');
+  if(emailEl && avatarEl){
+    const emailText = String(emailEl.textContent || '').trim();
+    // hide the visible email in the sidebar
+    emailEl.style.display = 'none';
+
+      // make avatar keyboard-focusable to reveal tooltip
+      avatarEl.setAttribute('tabindex','0');
+
+      // attach tooltip to the .profile container but position it above the avatar
+      const profileEl = document.querySelector('.profile');
+      const avatarElLocal = avatarEl; // use existing avatar element
+      let tooltip = profileEl ? profileEl.querySelector('.avatar-tooltip') : null;
+      if(!tooltip && profileEl){
+        tooltip = document.createElement('div');
+        tooltip.className = 'avatar-tooltip';
+        profileEl.appendChild(tooltip);
+      }
+    tooltip.textContent = emailText;
+    // also put email on data-email attribute if needed
+    avatarEl.dataset.email = emailText;
+      // connect accessible relation
+      if(tooltip) {
+        tooltip.id = tooltip.id || 'avatar-tooltip';
+        avatarEl.setAttribute('aria-describedby', tooltip.id);
+      }
+
+      // position tooltip above the avatar so it doesn't overlap other elements
+          // expose a shared helper to accurately position the avatar tooltip above the avatar
+          function positionTooltipAbove(){
+            if(!tooltip || !avatarElLocal || !profileEl) return;
+            // measure positions relative to profileEl
+            const avatarRect = avatarElLocal.getBoundingClientRect();
+            const profileRect = profileEl.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+
+            // compute left so tooltip is centered above avatar
+            const left = (avatarRect.left - profileRect.left) + (avatarRect.width / 2) - (tooltipRect.width / 2);
+            const top = (avatarRect.top - profileRect.top) - tooltipRect.height - 8; // 8px gap
+
+            tooltip.style.left = Math.max(6, left) + 'px';
+            tooltip.style.top = Math.max(-9999, top) + 'px';
+          }
+
+      // update position after DOM paint when tooltip is added
+      requestAnimationFrame(()=>{
+        positionTooltipAbove();
+      });
+
+      // reposition on resize or scroll
+      window.addEventListener('resize', positionTooltipAbove);
+      window.addEventListener('scroll', positionTooltipAbove, true);
+  }
+  if(welcomeNameEl) welcomeNameEl.textContent = firstName;
+}
+
+// run it on load
+syncProfileDisplay();
+
+// tap/click support for touch devices — toggle tooltip on the .profile element
+// Config: how long (ms) to auto-dismiss tooltip on touch devices after opening
+const TOOLTIP_AUTO_DISMISS_MS = 3000;
+
+function attachTooltipTapSupport(){
+  const profileEl = document.querySelector('.profile');
+  if(!profileEl) return;
+  const avatarEl = profileEl.querySelector('.avatar');
+  if(!avatarEl) return;
+
+  let autoDismissTimer = null;
+
+  const closeTooltip = () => {
+    profileEl.classList.remove('tooltip-visible');
+    avatarEl.setAttribute('aria-expanded','false');
+    if(autoDismissTimer){
+      clearTimeout(autoDismissTimer);
+      autoDismissTimer = null;
+    }
+  };
+
+  const toggleTooltip = (e) => {
+    // keep clicks on the avatar from bubbling to the document close handler
+    e.stopPropagation();
+    const isVisible = profileEl.classList.toggle('tooltip-visible');
+    avatarEl.setAttribute('aria-expanded', String(isVisible));
+
+    // If this is a touch/coarse pointer device and tooltip opened, auto-dismiss after a timeout
+    const isTouch = typeof window !== 'undefined' && ('ontouchstart' in window || window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    if(isVisible && isTouch){
+      if(autoDismissTimer) clearTimeout(autoDismissTimer);
+      autoDismissTimer = setTimeout(()=>{
+        closeTooltip();
+      }, TOOLTIP_AUTO_DISMISS_MS);
+    }
+    // if closed manually clear timer
+    if(!isVisible && autoDismissTimer){
+      clearTimeout(autoDismissTimer);
+      autoDismissTimer = null;
+    }
+  };
+
+  // toggle on click/tap for touch / small-pointer devices. Also works for mouse if user clicks.
+  avatarEl.addEventListener('click', (e)=>{
+    // only toggle where appropriate (touch/small pointer) but allow click too
+    toggleTooltip(e);
+    // reposition if tooltip is shown (wrapped content may change tooltip width/height)
+    setTimeout(()=>{
+      // small delay to allow layout changes
+      const evt = new Event('resize');
+      window.dispatchEvent(evt);
+    }, 0);
+  });
+
+  // accessibility: toggle with Enter / Space when avatar focused
+  avatarEl.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      toggleTooltip(e);
+    }
+  });
+
+  // close when clicking anywhere outside the profile
+  document.addEventListener('click', (e)=>{
+    if(profileEl.classList.contains('tooltip-visible') && !profileEl.contains(e.target)){
+      closeTooltip();
+    }
+  });
+
+  // close on Escape
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') closeTooltip();
+  });
+}
+
+attachTooltipTapSupport();
 
 /* -------------------------
   Google Sheets connection examples
