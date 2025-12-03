@@ -319,11 +319,14 @@ body{
 
 /* Make content panels share vertical space on larger screens */
 @media (min-width:981px){
-  .left-column .card.to-do{flex:1;display:flex;flex-direction:column;min-height:320px}
+  /* allow the to-do card to flex naturally with siblings (no forced min-height)
+     so columns align at the same baseline */
+  .left-column .card.to-do{flex:1;display:flex;flex-direction:column;min-height:0}
   .left-column .card.to-do .to-do-sections{flex:1;overflow:auto}
   .right-column .status-card{flex:1;display:flex;flex-direction:column}
   .right-column .status-card .status-row{flex:1;align-items:center}
-  .right-column .completed-card{flex:0.6}
+  /* make completed card stretch to match the to-do card height */
+  .right-column .completed-card{flex:1;display:flex;flex-direction:column}
 }
 
 /* very wide screens: keep the layout centered instead of stretching indefinitely */
