@@ -1,57 +1,256 @@
-(# TaskTracker — To-do List)
+# Task Manager Dashboard
 
-This small project demonstrates a simple front-end To‑Do list. The header date is now dynamically populated at runtime.
+A modern, responsive task management dashboard built with vanilla HTML, CSS, and JavaScript. Features a dynamic layout with a sidebar navigation, three-section to-do container, task status visualization, and completed task tracking.
 
-- The header date element in `index.html` is updated automatically by `script.js` using `updateHeaderDate()`.
-- The date shows the current weekday name and the date formatted as DD/MM/YYYY.
+## Quick Start
+Open `index.html` in a browser (or run `python -m http.server 8080` for local development) to see the dashboard with today's date, task sections, and completed task display.
 
-Open `index.html` in a browser (or a local dev server) to see the current date rendered in the top bar.
 
-Layout changes (updated):
-- The page now uses a single unified background (no small dark top strip + white boxed app). This makes the UI feel like one single page rather than a floating white card on a dark header.
-- Cards and panels have been softened (semi-transparent / subtle shadows) so the interface blends into the page.
 
-If you'd prefer a flat white card style again — or want the top dark strip restored — tell me which look you want and I can switch it back or provide both variants.
+## Features
 
-Responsive layout update:
-- The app container is now fluid and adapts to the viewport width. On narrow screens the layout collapses into a single column; on very wide screens content will center for readability.
+### 1. **Dynamic Date Display**
+- Header automatically displays today's day name and date (e.g., "Wednesday 04/12/2025")
+- Updates automatically based on system date
+- Located in the top-right corner of the topbar
+- Function: `updateHeaderDate()` formats the current date and displays day name
 
-Sidebar & responsiveness details:
-- The left sidebar remains visible at all sizes and becomes compact on small screens using CSS clamp() so it scales instead of being hidden.
-- Right column and other panels scale using flexible clamped widths for desktop and tablet. On very narrow phones the right column is hidden (to prioritize main content) but the sidebar remains visible.
+### 2. **Responsive Layout**
+- Fully fluid and responsive design using CSS `clamp()` for flexible sizing
+- Adapts seamlessly across desktop (>980px), tablet (520-980px), and mobile (<520px) screens
+- Sidebar always visible with icon-only mode on small screens (<520px)
+- Main content uses flexbox grid for proper alignment and stretching
+- Single unified background for cohesive UI appearance
 
-Icon-only sidebar:
-- On very narrow screens (phones) the left sidebar now switches to an icon-only compact mode — navigation text is hidden and each button shows its icon (from the `data-icon` attribute). The avatar and logout are also compacted.
-- This keeps the sidebar visible while saving horizontal space.
- - The emoji placeholders were replaced with inline SVG icons for a cleaner, scalable, and theme-able look. SVGs use currentColor so they adapt to active/hover colors.
+### 3. **Sidebar Navigation & Profile**
+- Red gradient background (#ff6b6b to #ff8f8f) with circular avatar at top
+- Avatar displays user initials (extracted and capitalized from profile name)
+- Navigation items with inline SVG icons (Home, Lightning, Clipboard, Folder, Gear, Help)
+- **Nav items centered vertically with 16px spacing** between buttons
+- Logout button fixed at bottom
+- Icon-only mode on mobile: SVG icons only, text labels hidden
 
-Sidebar rounded corners:
-- The left sidebar now uses the same rounded corner radius as nav buttons so the UI feels consistent (controlled by --nav-radius in `script.css`).
+### 4. **Avatar & Profile Display**
+- Circular avatar: 45px desktop, 44px tablet, 36px mobile (explicit sizes prevent zoom distortion)
+- Shows user initials in uppercase on transparent white background
+- **Hover/click/focus reveals email tooltip** with auto-dismiss on touch (3000ms configurable)
+- Dynamic welcome message with first name from profile
+- Multi-layer tooltip interaction:
+  - Mouse hover, keyboard focus, click/tap, Enter/Space, Escape to close
+  - Touch devices auto-dismiss after 3000ms
 
-Profile & welcome behaviour:
-- The avatar initials are now generated from the profile name automatically and capitalised. The visible welcome message next to the header will also use the first name from the profile.
+### 5. **Three-Section To-Do Container** ⭐ (NEW TODAY)
+Three horizontal sections with equal width (33.333% each), white background, subtle borders:
 
-Avatar styling:
-- The avatar now uses a responsive width with aspect-ratio:1/1 and overflow:hidden, so it always renders as a perfect circle (not oval) across breakpoints. Adjust `--nav-radius` or the `width` values in `script.css` to change the avatar size.
- - The avatar now uses explicit equal width + height values per breakpoint (desktop 45px, md 44px, sm 36px). This avoids sub-pixel or zoom rounding issues that could produce an oval when zooming out. You can edit the `--avatar-size-*` variables in `script.css` to tune sizes.
+#### **Section 1: Tasks (Blue #dbeafe)**
+- Tasks created today with "Not Started" status
+- Display: **name only** (description hidden)
+- Filter: `task.created === today && task.status === 'Not Started'`
 
- - The profile email is now hidden in the sidebar for a cleaner look; the email is available via a hover/focus tooltip on the avatar. The tooltip is attached under the profile name (`.profile-info`) so it appears below the name (not to the right), and shows on hover, keyboard focus or a tap on touch devices.
- - The profile email is now hidden in the sidebar for a cleaner look; the email is available via a hover/focus tooltip on the avatar. The tooltip is attached to the `.profile` container to ensure it's not clipped and shows on hover or when the avatar receives keyboard focus or a tap on touch devices.
+#### **Section 2: In Progress (Green #dcfce7)**
+- Tasks currently being worked on (status = "In Progress")
+- Sorted by **longest duration** (oldest `started` timestamp first)
+- Display: full details visible
+- Filter: `task.status === 'In Progress' && task.started && !task.deadline`
 
-Auto-dismiss on touch devices:
- - On touch/coarse-pointer devices the tooltip will auto-dismiss after a configurable timeout to avoid leaving the tooltip open after a tap. The timeout is defined by the JavaScript constant `TOOLTIP_AUTO_DISMISS_MS` in `script.js` (default 3000 ms). Change that value if you'd like a shorter or longer duration.
+#### **Section 3: Deadline (Red #fee2e2)**
+- Tasks with deadline today
+- Display: full details visible
+- Filter: `task.deadline === today`
 
-Tooltip wrapping and responsive width:
-- The tooltip now supports multi-line content and will wrap text when necessary. On desktop it uses a sensible max width (default 220px) and on small screens it expands up to 70vw (or 300px) so long emails or other content will wrap and remain readable. Change `--avatar-tooltip-max` in `script.css` to customize the desktop max width.
+**Common styling:**
+- Section headings: **centered, uppercase, 13px, bold**
+- Task titles: **12px, normal weight (#0f172a)** — headers stand out
+- Colored backgrounds on individual task cards (not containers)
+- White section containers with subtle green borders and shadows
 
-Avatar email tooltip:
-- The profile email is now hidden from the sidebar (only the name is visible). Hovering or keyboard focusing the avatar shows a small tooltip popup with the email address.
+### 6. **Task Status Visualization (Donuts)** ⭐ (REPOSITIONED TODAY)
+Three donut charts showing completion percentages:
+- **Completed**: Green arc
+- **In Progress**: Blue arc  
+- **Not Started**: Red arc
 
-Layout: better use of white space
-- The app now fills the viewport height so there's no wasted footer space; left and right columns stretch to match available height.
-- The To-Do card and Task Status card stretch to fill their columns on desktop, and the task list becomes scrollable when content overflows.
+**Percentages:**
+- Positioned **absolutely inside 46px white inner circle**
+- Centered with transform translate(-50%, -50%)
+- Font: 12px, bold, dark green
+- Does not overlap ring
 
-Default To-Do behavior:
-- The To-Do section now starts empty — only the `To-Do` heading and the `+ Add task` button are visible by default. You can add tasks using the UI (or re-enable sample tasks in `script.js` for demo data).
+**Labels:**
+- Appear **below each donut**
+- Font: 12px, **bold**, dark green
+- Text: "Completed", "In Progress", "Not Started"
+
+### 7. **Completed Task Container** ⭐ (NEW TODAY)
+Shows **most recent completed task only**:
+- Sorted by `completedAt` > `started` > `created` (newest first)
+- Display: title only, no description
+- Styling: 
+  - Green gradient background (#ecfdf5 → #dcfce7)
+  - Green border (rgba(16,185,129,0.12)) with shadow
+  - Bold dark green title (#065f46)
+- **"Completed" badge**: 6px radius, green border/text, semi-transparent background
+
+### 8. **Responsive Breakpoints**
+
+| Desktop (>980px) | Tablet (520-980px) | Mobile (<520px) |
+|---|---|---|
+| Sidebar: ~260px | Sidebar: ~220px | Sidebar: ~180px |
+| Avatar: 45px | Avatar: 44px | Avatar: 36px |
+| Full nav text | Compact nav | Icon-only nav |
+| All columns visible | All columns visible | Right column hidden |
+
+### 9. **CSS Variables** (Centralized Theming)
+```css
+--bg: #f5f7fa;                    /* Page background */
+--card: #ffffff;                  /* Card background */
+--accent: #ff6b6b;                /* Sidebar color */
+--shadow: 0 6px 18px ...;         /* Standard shadow */
+--gap: 18px;                      /* Standard spacing */
+--avatar-size-desktop: 45px;      /* Desktop avatar */
+--avatar-size-md: 44px;           /* Tablet avatar */
+--avatar-size-sm: 36px;           /* Mobile avatar */
+--avatar-tooltip-max: 220px;      /* Tooltip width */
+```
+
+### 10. **Accessibility Features**
+- Avatar keyboard-focusable (tabindex="0")
+- Tooltip via Enter/Space, Escape to close
+- Touch auto-dismiss with configurable timeout
+- Semantic HTML with proper heading hierarchy
+- WCAG-compliant color contrast
+- Responsive viewport support
+
+## Technical Stack
+
+- **HTML5**: Semantic markup
+- **CSS3**: Flexbox, Grid, custom properties, media queries, conic-gradient
+- **JavaScript**: Vanilla (no frameworks) — pure DOM manipulation
+- **SVG Icons**: Inline, scalable, themable with currentColor
+
+## File Structure
+
+```
+d:\My Projects\
+├── index.html       # Main markup (sections, donuts, completed container)
+├── script.css       # Responsive styling (grid, flexbox, media queries)
+├── script.js        # Task rendering, filtering, profile sync, date updates
+└── readme.md        # This file
+```
+
+## Configuration
+
+### Tooltip Auto-Dismiss Timeout
+`script.js`, line ~269:
+```javascript
+const TOOLTIP_AUTO_DISMISS_MS = 3000;  // milliseconds
+```
+
+### Avatar Sizes
+`script.css` variables:
+```css
+--avatar-size-desktop: 45px;
+--avatar-size-md: 44px;
+--avatar-size-sm: 36px;
+```
+
+### Tooltip Max Width
+`script.css`:
+```css
+--avatar-tooltip-max: 220px;
+```
+
+## Sample Data
+
+5 sample tasks included (`sampleTasks` array in `script.js`):
+1. **Design homepage wireframe** — Not Started, created today
+2. **Review PR feedback** — In Progress, deadline today
+3. **Update documentation** — Not Started, deadline today
+4. **Fix responsive bug** — In Progress, no deadline
+5. **Write unit tests** — Completed, completed today
+
+### Task Object Structure
+```javascript
+{
+  id: 1,
+  title: 'Task name',
+  description: 'Details',
+  priority: 'High|Medium|Low',
+  status: 'Not Started|In Progress|Completed',
+  created: 'YYYY-MM-DD',
+  started: 'YYYY-MM-DDTHH:MM',
+  deadline: 'YYYY-MM-DD',
+  completedAt: 'YYYY-MM-DDTHH:MM'
+}
+```
+
+## Usage
+
+### Local Development
+```bash
+cd "d:\My Projects"
+python -m http.server 8080
+# Open browser to http://localhost:8080
+```
+
+### Adding Tasks
+Extend `sampleTasks` array in `script.js`:
+```javascript
+{
+  id: 6,
+  title: 'New task',
+  description: 'Description here',
+  priority: 'High',
+  status: 'In Progress',
+  created: getTodayDateString(),
+  started: getTodayDateString() + 'T10:00',
+  deadline: getTodayDateString(),
+  completedAt: null
+}
+```
+
+## Browser Support
+
+Modern browsers with:
+- CSS Flexbox & Grid
+- CSS Custom Properties
+- CSS clamp() and conic-gradient
+- ES6 JavaScript
+- getBoundingClientRect() API
+
+## Recent Changes (Today's Session) ✅
+
+- ✅ Three-Section To-Do Layout (horizontal, equal widths)
+- ✅ Color-Coded Tasks (blue/green/red on individual cards)
+- ✅ Name-Only Display (Tasks section, compact view)
+- ✅ Section Headings Centered (uppercase, bold, visual hierarchy)
+- ✅ Nav Item Spacing Increased (16px gap, centered vertically)
+- ✅ Donut Percentages Repositioned (inside 46px white circle, centered)
+- ✅ Completed Task Display (most recent only, green styling)
+- ✅ Badge Border-Radius (6px, subtle rounded corners)
+- ✅ Text Size Reduction (12px titles, font-weight 400)
+- ✅ White Section Containers (shadows, subtle borders)
+
+## Future Enhancements
+
+- Task add/edit/delete UI
+- Local storage persistence
+- Google Sheets integration
+- Dark mode theme
+- Drag-and-drop task management
+- Advanced filtering & search
+- Date range selection
+- Recurring tasks
+- Team collaboration
+
+## Notes
+
+- Avatar uses explicit pixel sizes to prevent zoom distortion across breakpoints
+- Tooltip positioned via JavaScript (getBoundingClientRect) for accuracy
+- Three-section filtering can be adapted to different criteria
+- All colors are customizable via CSS variables or direct editing
+- Completed task shows only most recent for focused, minimal view
+- Section headings center-aligned for visual balance
+
 
 
