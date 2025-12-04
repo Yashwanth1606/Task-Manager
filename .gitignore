@@ -1,0 +1,8 @@
+# Node
+node_modules/
+
+# Local service account key - DO NOT COMMIT
+service-account.json
+
+# Env files
+.env
