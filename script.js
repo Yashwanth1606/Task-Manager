@@ -120,9 +120,18 @@ function renderTasks(tasks){
   const today = getTodayDateString();
   let tasksCount = 0, inProgressCount = 0, deadlineCount = 0, completedCount = 0;
 
+function toTitleCase(str) {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+
 function createTaskCard(task, showDescription = true) {
   const t = document.createElement('div');
-  t.className = 'task card-style'; // use both for backward compat
+  t.className = 'task card-style';
 
   // CONTENT wrapper
   const content = document.createElement('div');
@@ -131,13 +140,13 @@ function createTaskCard(task, showDescription = true) {
   // Title (big)
   const title = document.createElement('div');
   title.className = 'task-title';
-  title.textContent = task.title || 'Untitled task';
+  title.textContent = toTitleCase(task.title || 'Untitled task');
 
-  // Meta row: due date and priority
+  // Meta row container
   const meta = document.createElement('div');
   meta.className = 'task-meta';
 
-  // Due date — normalize or display nicely
+  // Due date
   let dueText = '';
   if (task.deadline) {
     const d = new Date(task.deadline);
@@ -155,15 +164,10 @@ function createTaskCard(task, showDescription = true) {
   dueEl.className = 'meta-item due';
   dueEl.textContent = dueText ? `Due: ${dueText}` : '';
 
-  const prEl = document.createElement('div');
-  prEl.className = 'meta-item priority';
-  prEl.textContent = task.priority ? `Priority: ${task.priority}` : '';
-
-  // Append meta pieces (only show those that have text)
+  // Only append due date (no priority anymore)
   if (dueEl.textContent) meta.appendChild(dueEl);
-  if (prEl.textContent) meta.appendChild(prEl);
 
-  // Optional small description under title (only if showDescription true)
+  // Optional description (you can remove this too if needed)
   if (showDescription && task.description) {
     const desc = document.createElement('div');
     desc.className = 'task-desc';

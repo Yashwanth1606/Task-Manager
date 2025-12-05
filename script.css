@@ -469,13 +469,13 @@ body{
 .card-style {
   display: flex;
   align-items: center;            /* center marker vertically */
-  gap: 14px;
+  gap: 5px;
   background: #ffffff;
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 5px 15px;
   box-shadow: 0 8px 20px rgba(20,30,60,0.06);
   border: 1px solid rgba(15,23,36,0.04);
-  margin: 10px 12px;
+  margin: 5px 5px;
   transition: transform .12s ease, box-shadow .12s ease;
   min-height: 76px;
   max-width: 320px;              /* keep cards compact */
@@ -494,14 +494,14 @@ body{
 .card-style .content {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
   min-width: 0;
 }
 
 /* title styling */
 .card-style .task-title {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: #0f1724;
   line-height: 1.12;
   margin: 0;
@@ -513,7 +513,7 @@ body{
   display: flex;
   gap: 5px;
   align-items: center;
-  margin-top: 4px;
+  margin-top: 1px;
   margin-left: 15px;
   flex-wrap: wrap;
 }
@@ -524,7 +524,7 @@ body{
   font-size: 10px;
   color: #334155;
   background: rgba(15,23,36,0.04);
-  padding: 6px 12px;
+  padding: 6px 6px;
   border-radius: 6px;
   border: 1px solid rgba(15,23,36,0.03);
   line-height: 1;
@@ -546,7 +546,7 @@ body{
   font-size: 13px;
   color: #566274;
   line-height: 1.25;
-  margin-top: 4px;
+  margin-top: 1px;
 }
 
 /* hover: gentle lift */
@@ -557,7 +557,7 @@ body{
 
 /* smaller screens — adapt width and height */
 @media (max-width: 900px){
-  .card-style { max-width: 100%; padding: 10px 12px; min-height: 68px; }
+  .card-style { max-width: 100%; padding: 5px 5px; min-height: 68px; }
   .card-style .left-marker { height: 40px; }
   .card-style .task-title { font-size: 10px; }
   .card-style .task-meta .meta-item { font-size: 10px; padding: 5px 5px; }
