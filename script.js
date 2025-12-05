@@ -439,3 +439,120 @@ function attachTooltipTapSupport(){
 
 attachTooltipTapSupport();
 
+// ---------- Add Task modal behavior ----------
+(function(){
+
+  // ELEMENTS
+  const backdrop = document.getElementById('at_backdrop');
+  const openBtn = document.getElementById('addTaskSmall');
+  const openBtnTop = document.getElementById('createTaskBtn');
+  const closeX = document.getElementById('at_close_x');
+  const cancelBtn = document.getElementById('at_cancel');
+  const form = document.getElementById('at_form');
+
+  const inputTitle = document.getElementById('at_title');
+  const inputDesc = document.getElementById('at_description');
+  const inputPriority = document.getElementById('at_priority');
+  const inputDue = document.getElementById('at_dueDate');
+  const submitBtn = document.getElementById('at_submit');
+
+  // FUNCTIONS
+  function openModal(){
+    if(!backdrop) return;
+    // reset inputs
+    inputTitle.value = '';
+    inputDesc.value = '';
+    inputPriority.value = 'High';
+    inputDue.value = '';
+    // give keyboard focus
+    setTimeout(()=> inputTitle.focus(), 10);
+    backdrop.style.display = 'flex';
+    backdrop.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden'; // prevent background scroll
+  }
+
+  function closeModal(){
+    if(!backdrop) return;
+    backdrop.style.display = 'none';
+    backdrop.setAttribute('aria-hidden','true');
+    document.body.style.overflow = ''; // restore
+  }
+
+  // OPEN MODAL (your button ONLY)
+  if (openBtn) {
+    openBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal();
+    });
+  } else {
+    console.warn("Add Task button (#addTaskSmall) not found. Add id='addTaskSmall' to your + Add task button or update the selector.");
+  }
+  if (openBtnTop) {
+    openBtnTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal();
+    });
+  } else {
+    console.warn("Add Task button (#createTaskBtn) not found. Add id='createTaskBtn' to your + Add task button or update the selector.");
+  }
+
+  // CLOSE MODAL
+  if (closeX) closeX.addEventListener('click', closeModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+  // CLOSE BY CLICKING ON BACKDROP
+  if (backdrop) {
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closeModal();
+    });
+  }
+
+  // SUBMIT FORM → SEND TO BACKEND
+  if (form) {
+    form.addEventListener('submit', async function(ev){
+      ev.preventDefault();
+
+      const title = (inputTitle && inputTitle.value || '').trim();
+      const description = (inputDesc && inputDesc.value || '').trim();
+      const priority = (inputPriority && inputPriority.value) || 'High';
+      const dueDate = (inputDue && inputDue.value) || '';
+      const status = "Not Started";  // Default
+
+      if(!title){
+        alert("Enter a task title");
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Adding...";
+      }
+
+      try {
+        const res = await fetch("http://localhost:3000/tasks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, description, priority, dueDate, status })
+        });
+
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Done";
+        }
+
+        // close and refresh
+        closeModal();
+        setTimeout(() => loadTasksFromServer(), 700);
+
+      } catch (err){
+        console.error("Add task failed", err);
+        alert("Error adding task");
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Done";
+        }
+      }
+    });
+  }
+
+})(); // end IIFE
