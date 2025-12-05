@@ -464,3 +464,101 @@ body{
   .at-modal-inner { padding:16px; border-width:3px; }
 }
 
+/* ===== Improved task card styling — paste this replacing previous .card-style rules ===== */
+
+.card-style {
+  display: flex;
+  align-items: center;            /* center marker vertically */
+  gap: 14px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 8px 20px rgba(20,30,60,0.06);
+  border: 1px solid rgba(15,23,36,0.04);
+  margin: 10px 12px;
+  transition: transform .12s ease, box-shadow .12s ease;
+  min-height: 76px;
+  max-width: 320px;              /* keep cards compact */
+  box-sizing: border-box;
+}
+
+/* left marker: short rounded bar, vertically centered 
+.card-style .left-marker {
+  width: 12px;
+  height: 44px;
+  border-radius: 8px;
+  flex: 0 0 12px;
+}
+*/
+/* content area laid out vertically */
+.card-style .content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* title styling */
+.card-style .task-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f1724;
+  line-height: 1.12;
+  margin: 0;
+  white-space: normal;
+}
+
+/* small meta row: show due + priority as compact pills */
+.card-style .task-meta {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-top: 4px;
+  margin-left: 15px;
+  flex-wrap: wrap;
+}
+
+/* individual meta pill */
+.card-style .task-meta .meta-item {
+  display: inline-block;
+  font-size: 10px;
+  color: #334155;
+  background: rgba(15,23,36,0.04);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(15,23,36,0.03);
+  line-height: 1;
+  box-shadow: none;
+}
+
+/* Due pill narrower and vertically centered */
+.card-style .task-meta .due {
+  padding: 6px 8px;
+}
+
+/* Priority pill — make it slightly bolder */
+.card-style .task-meta .priority {
+  font-weight: 600;
+}
+
+/* optional description small (if used) */
+.card-style .task-desc {
+  font-size: 13px;
+  color: #566274;
+  line-height: 1.25;
+  margin-top: 4px;
+}
+
+/* hover: gentle lift */
+.card-style:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(20,30,60,0.12);
+}
+
+/* smaller screens — adapt width and height */
+@media (max-width: 900px){
+  .card-style { max-width: 100%; padding: 10px 12px; min-height: 68px; }
+  .card-style .left-marker { height: 40px; }
+  .card-style .task-title { font-size: 10px; }
+  .card-style .task-meta .meta-item { font-size: 10px; padding: 5px 5px; }
+}

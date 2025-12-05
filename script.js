@@ -120,41 +120,66 @@ function renderTasks(tasks){
   const today = getTodayDateString();
   let tasksCount = 0, inProgressCount = 0, deadlineCount = 0, completedCount = 0;
 
-  // Helper function to create a task card element
-    function createTaskCard(task, showDescription = true) {
-    const t = document.createElement('div');
-    t.className = 'task';
-    const marker = document.createElement('div');
-    marker.className = 'left-marker';
-    
-    if (task.status === 'Completed') marker.style.background = '#0dbb7b';
-    else if (task.status === 'In Progress') marker.style.background = '#1e90ff';
-    else marker.style.background = '#ff6b6b';
+function createTaskCard(task, showDescription = true) {
+  const t = document.createElement('div');
+  t.className = 'task card-style'; // use both for backward compat
 
-    const content = document.createElement('div');
-    content.className = 'content';
-    const title = document.createElement('h4');
-    title.textContent = task.title;
-      if (!showDescription) {
-        content.appendChild(title);
-        t.appendChild(marker);
-        t.appendChild(content);
-        return t;
-      }
-    const desc = document.createElement('p');
+  // CONTENT wrapper
+  const content = document.createElement('div');
+  content.className = 'content';
+
+  // Title (big)
+  const title = document.createElement('div');
+  title.className = 'task-title';
+  title.textContent = task.title || 'Untitled task';
+
+  // Meta row: due date and priority
+  const meta = document.createElement('div');
+  meta.className = 'task-meta';
+
+  // Due date — normalize or display nicely
+  let dueText = '';
+  if (task.deadline) {
+    const d = new Date(task.deadline);
+    if (!isNaN(d.getTime())) {
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const yyyy = d.getFullYear();
+      dueText = `${dd}-${mm}-${yyyy}`;
+    } else {
+      dueText = task.deadline;
+    }
+  }
+
+  const dueEl = document.createElement('div');
+  dueEl.className = 'meta-item due';
+  dueEl.textContent = dueText ? `Due: ${dueText}` : '';
+
+  const prEl = document.createElement('div');
+  prEl.className = 'meta-item priority';
+  prEl.textContent = task.priority ? `Priority: ${task.priority}` : '';
+
+  // Append meta pieces (only show those that have text)
+  if (dueEl.textContent) meta.appendChild(dueEl);
+  if (prEl.textContent) meta.appendChild(prEl);
+
+  // Optional small description under title (only if showDescription true)
+  if (showDescription && task.description) {
+    const desc = document.createElement('div');
+    desc.className = 'task-desc';
     desc.textContent = task.description;
-    const meta = document.createElement('div');
-    meta.className = 'meta';
-    meta.innerHTML = `<span>Priority: ${task.priority}</span><span>Status: ${task.status}</span>`;
-    
     content.appendChild(title);
     content.appendChild(desc);
     content.appendChild(meta);
-    
-    t.appendChild(marker);
-    t.appendChild(content);
-    return t;
+  } else {
+    content.appendChild(title);
+    content.appendChild(meta);
   }
+
+  t.appendChild(content);
+  return t;
+}
+
 
  // Process all tasks
 const completedTasks = [];
