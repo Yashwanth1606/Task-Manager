@@ -72,5 +72,37 @@ app.post('/tasks', async (req, res) => {
   }
 });
 
+// PATCH /tasks/:id  -> update task status in column G of the sheet
+app.patch('/tasks/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ ok: false, error: 'invalid id' });
+    }
+    const { status } = req.body;
+    if (typeof status !== 'string') {
+      return res.status(400).json({ ok: false, error: 'status required' });
+    }
+
+    const sheets = await getSheetsClient();
+
+    // spreadsheet row to update (data rows start at row 2, so id 1 -> row 2)
+    const sheetRow = id + 1;
+    const range = `Sheet1!G${sheetRow}`; // column G = Status
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: [[ status ]] }
+    });
+
+    return res.json({ ok: true, id, status });
+  } catch (err) {
+    console.error('PATCH /tasks/:id error', err);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));

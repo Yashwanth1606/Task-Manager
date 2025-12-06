@@ -62,7 +62,6 @@ const sampleTasks = [
     deadline: '2025-01-15'
   }
 ];
-// NEW: Load real tasks from our Node/Google Sheets backend
 async function loadTasksFromServer() {
   try {
     const res = await fetch('http://localhost:3000/tasks');
@@ -86,20 +85,27 @@ async function loadTasksFromServer() {
       deadline: t.dueDate || null,
 
       // we don't have a completedAt timestamp in the sheet, so leave null.
-      // renderTasks() will then treat the most recently *created* completed task
-      // as the "latest completed" one for the Completed Task card.
       completedAt: null
     }));
 
+    // store globally for drag/drop updates
+    window.currentTasks = tasks;
+
+    // render and then wire drag/drop (must wire after DOM elements exist)
     renderTasks(tasks);
+    if (typeof enableTaskDragAndDrop === 'function') enableTaskDragAndDrop();
+
   } catch (err) {
     console.error('Failed to load tasks from server', err);
 
     // Fallback: show no tasks (or you can use sampleTasks if you want demo data)
     renderTasks([]);
-    // renderTasks(sampleTasks); // <- use this instead if you want demo data on error
+    window.currentTasks = [];
+    // you may still want to enable the drag handlers on the (empty) columns
+    if (typeof enableTaskDragAndDrop === 'function') enableTaskDragAndDrop();
   }
 }
+
 
 
 const tasksListEl = document.querySelector('.tasks-list');
@@ -133,11 +139,24 @@ function createTaskCard(task, showDescription = true) {
   const t = document.createElement('div');
   t.className = 'task card-style';
 
+  // make draggable & store id so drop handlers can find it
+  t.setAttribute('draggable', 'true');
+  t.dataset.taskId = String(task.id);
+
+  // drag visuals
+  t.addEventListener('dragstart', function (ev) {
+    ev.dataTransfer.setData('text/plain', t.dataset.taskId);
+    t.classList.add('dragging');
+  });
+  t.addEventListener('dragend', function () {
+    t.classList.remove('dragging');
+  });
+
   // CONTENT wrapper
   const content = document.createElement('div');
   content.className = 'content';
 
-  // Title (big)
+  // Title (big) — using your existing toTitleCase helper
   const title = document.createElement('div');
   title.className = 'task-title';
   title.textContent = toTitleCase(task.title || 'Untitled task');
@@ -164,10 +183,10 @@ function createTaskCard(task, showDescription = true) {
   dueEl.className = 'meta-item due';
   dueEl.textContent = dueText ? `Due: ${dueText}` : '';
 
-  // Only append due date (no priority anymore)
+  // Only append due date (no priority)
   if (dueEl.textContent) meta.appendChild(dueEl);
 
-  // Optional description (you can remove this too if needed)
+  // Optional description (only if showDescription true)
   if (showDescription && task.description) {
     const desc = document.createElement('div');
     desc.className = 'task-desc';
@@ -183,6 +202,7 @@ function createTaskCard(task, showDescription = true) {
   t.appendChild(content);
   return t;
 }
+
 
 
  // Process all tasks
@@ -290,6 +310,80 @@ tasks.forEach(task => {
     d.style.background = `conic-gradient(${color} ${pct}%, #e6eef6 ${pct}%)`;
   });
 }
+
+// --- Drag & Drop wiring for Tasks -> In Progress -> Completed (deadline column read-only) ---
+function enableTaskDragAndDrop() {
+  const tasksCol = document.querySelector('.tasks-list');
+  const inprogressCol = document.querySelector('.inprogress-list');
+  const completedCol = document.getElementById('completedList');
+
+  const interactiveCols = [
+    { el: tasksCol, status: 'Not Started' },
+    { el: inprogressCol, status: 'In Progress' },
+    { el: completedCol, status: 'Completed' }
+  ];
+
+  interactiveCols.forEach(col => {
+    if (!col.el) return;
+
+    col.el.addEventListener('dragover', function (ev) {
+      ev.preventDefault();
+      col.el.classList.add('drag-over');
+    });
+
+    col.el.addEventListener('dragleave', function () {
+      col.el.classList.remove('drag-over');
+    });
+
+    col.el.addEventListener('drop', async function (ev) {
+      ev.preventDefault();
+      col.el.classList.remove('drag-over');
+
+      const taskId = ev.dataTransfer.getData('text/plain');
+      if (!taskId) return;
+
+      const draggedEl = document.querySelector(`[data-task-id="${taskId}"]`);
+      if (!draggedEl) return;
+
+      // append the card visually
+      col.el.appendChild(draggedEl);
+
+      // update in-memory tasks copy
+      const idNum = isNaN(taskId) ? taskId : Number(taskId);
+      if (window.currentTasks && Array.isArray(window.currentTasks)) {
+        const t = window.currentTasks.find(x => x.id === idNum);
+        if (t) t.status = col.status;
+      }
+
+      // persist to backend
+      try {
+        await updateTaskStatusOnServer(idNum, col.status);
+      } catch (err) {
+        console.error('Failed to update task status', err);
+        if (typeof loadTasksFromServer === 'function') loadTasksFromServer(); // revert visually
+        return;
+      }
+
+      // refresh widgets (donuts, completed card) by reloading tasks from server
+      if (typeof loadTasksFromServer === 'function') {
+        setTimeout(() => loadTasksFromServer(), 200);
+      }
+    });
+  });
+}
+
+// Persist status change to backend. Adjust path if your server uses different route.
+async function updateTaskStatusOnServer(id, newStatus) {
+  const url = `http://localhost:3000/tasks/${id}`; // expects PATCH /tasks/:id on your server
+  const res = await fetch(url, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: newStatus })
+  });
+  if (!res.ok) throw new Error('Server error: ' + res.status);
+  return res.json();
+}
+
 
 // initial render: no tasks by default so the To-Do card is empty and only shows header/button
 loadTasksFromServer();

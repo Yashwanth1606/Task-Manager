@@ -562,3 +562,15 @@ body{
   .card-style .task-title { font-size: 10px; }
   .card-style .task-meta .meta-item { font-size: 10px; padding: 5px 5px; }
 }
+
+.tasks-list.drag-over,
+.inprogress-list.drag-over,
+#completedList.drag-over {
+  outline: 2px dashed rgba(43,156,255,0.18);
+  background: rgba(43,156,255,0.02);
+}
+
+.task.dragging {
+  opacity: 0.6;
+  transform: scale(0.98);
+}
