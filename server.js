@@ -20,23 +20,28 @@ async function getSheetsClient(){
   return google.sheets({version: 'v4', auth: authClient});
 }
 
-// Helper: map rows to task objects assuming columns A..G: Date, Time, Task Name, Description, Priority, Due Date, Status
+// Helper: map rows to task objects assuming columns A..I:
+// A Date, B Time, C Task Name, D Description, E Priority, F Due Date, G Status, H Started, I CompletedAt
 function rowsToTasks(rows){
-  return (rows || []).map(r => ({
+  return (rows || []).map((r, idx) => ({
+    id: idx + 1,               // id maps to sheet data row index (1 => sheet row 2)
     date: r[0] || '',
     time: r[1] || '',
     title: r[2] || '',
     description: r[3] || '',
     priority: r[4] || '',
     dueDate: r[5] || '',
-    status: r[6] || ''
+    status: r[6] || '',
+    started: r[7] || '',     
+    completedAt: r[8] || '' 
   }));
 }
+
 
 app.get('/tasks', async (req, res) => {
   try{
     const sheets = await getSheetsClient();
-    const range = 'Sheet1!A2:G';
+    const range = 'Sheet1!A2:I';
     const resp = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range });
     const rows = resp.data.values || [];
     return res.json({ok: true, tasks: rowsToTasks(rows)});
@@ -55,12 +60,12 @@ app.post('/tasks', async (req, res) => {
     const isoDate = now.toISOString().split('T')[0]; // YYYY-MM-DD
     const time = now.toTimeString().split(' ')[0]; // HH:MM:SS
 
-    const newRow = [isoDate, time, title, description || '', priority || '', dueDate || '', status || 'Not Started'];
+    const newRow = [isoDate, time, title, description || '', priority || '', dueDate || '', status || 'Not Started', '', ''];
 
     const sheets = await getSheetsClient();
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: 'Sheet1!A:G',
+      range: 'Sheet1!A:I',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: [newRow] }
     });
@@ -72,7 +77,7 @@ app.post('/tasks', async (req, res) => {
   }
 });
 
-// PATCH /tasks/:id  -> update task status in column G of the sheet
+// PATCH /tasks/:id  -> update task status in column G and set timestamps in H/I
 app.patch('/tasks/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -88,14 +93,67 @@ app.patch('/tasks/:id', async (req, res) => {
 
     // spreadsheet row to update (data rows start at row 2, so id 1 -> row 2)
     const sheetRow = id + 1;
-    const range = `Sheet1!G${sheetRow}`; // column G = Status
+    const statusRange = `Sheet1!G${sheetRow}`; // column G = Status
 
+    // Prepare timestamp logic
+    const now = new Date();
+    const isoTs = now.toISOString(); // e.g. 2025-12-07T10:23:00.000Z
+
+    // Always update the Status cell first
     await sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
-      range,
+      range: statusRange,
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: [[ status ]] }
     });
+
+    // If status becomes "In Progress" -> set Started (column H) but only if empty
+  if (status === 'In Progress') {
+    const startedRange = `Sheet1!H${sheetRow}`;
+    // read current value
+    const startedResp = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: startedRange
+    });
+    const current = (startedResp.data.values && startedResp.data.values[0] && startedResp.data.values[0][0]) || '';
+    if (!current) {
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SHEET_ID,
+        range: startedRange,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: { values: [[ isoTs ]] }
+      });
+    }
+  }
+
+
+    // If status becomes "Completed" -> set CompletedAt (column I)
+    if (status === 'Completed') {
+      const completedRange = `Sheet1!I${sheetRow}`;
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SHEET_ID,
+        range: completedRange,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: { values: [[ isoTs ]] }
+      });
+    }
+
+    // Optional: if you move a task back to Not Started, you may want to clear H and I.
+    // Uncomment the block below if you want that behaviour:
+    
+    if (status === 'Not Started') {
+      await sheets.spreadsheets.values.batchUpdate({
+        spreadsheetId: SHEET_ID,
+        requestBody: {
+          valueInputOption: 'USER_ENTERED',
+          data: [
+            { range: `Sheet1!H${sheetRow}`, values: [['']] },
+            { range: `Sheet1!I${sheetRow}`, values: [['']] }
+          ]
+        }
+      });
+    }
+    
 
     return res.json({ ok: true, id, status });
   } catch (err) {
@@ -103,6 +161,7 @@ app.patch('/tasks/:id', async (req, res) => {
     return res.status(500).json({ ok: false, error: err.message });
   }
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
