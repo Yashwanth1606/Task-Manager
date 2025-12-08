@@ -558,8 +558,6 @@ function enableTaskDragAndDrop() {
   });
 }
 
-
-
 // Persist status change to backend. Adjust path if your server uses different route.
 async function updateTaskStatusOnServer(id, newStatus) {
   const url = `http://localhost:3000/tasks/${id}`; // expects PATCH /tasks/:id on your server

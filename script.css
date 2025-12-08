@@ -750,3 +750,4 @@ body{
 }
 /* remove the small "when" pill used earlier (if present) */
 .completed-item .when { display: none; }
+/* ===== Equal-height layout for sidebar | to-do | right column ===== */
