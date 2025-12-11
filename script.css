@@ -237,7 +237,7 @@ body{
 /* Task card base (dark) */
 .card-style {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
   border-radius: 12px;
@@ -245,7 +245,7 @@ body{
   box-shadow: 0 6px 20px rgba(0,0,0,0.6);
   border: 1px solid rgba(255,255,255,0.02);
   transition: transform .12s ease, box-shadow .12s ease;
-  min-height: 68px;
+  min-height: 88px;
   box-sizing: border-box;
   color:#e6eef6;
 }
@@ -265,9 +265,27 @@ body{
   border: 1px solid rgba(239,68,68,0.06);
 }
 
-/* card content */
-.card-style .content { display:flex; flex-direction:column; gap:6px; min-width:0; }
-.card-style .task-title { font-size:13px; font-weight:600; color:#f8fafc; line-height:1.18; margin:0; word-break:break-word; }
+/* Option B — clamp via max-height (no vendor props, no linter warnings) */
+.card-style .task-title {
+  font-size: clamp(12px, calc(1.25vw + 8px), 14px);
+  line-height: 1.16;
+  font-weight: 600;
+  margin: 0;
+
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+
+  /* clamp to 3 lines via max-height */
+  max-height: calc(1.16em * 3); /* line-height * number-of-lines */
+}
+
+
+
+
 .card-style .task-desc { font-size:13px; color:var(--muted); margin:0; }
 .card-style .task-meta{ display:flex; gap:8px; align-items:center; margin-top:4px }
 .card-style .task-meta .meta-item{ font-size:11px; color:#c8d0da; background:rgba(255,255,255,0.02); padding:6px 8px; border-radius:8px; border:1px solid rgba(255,255,255,0.02); }
@@ -411,3 +429,108 @@ body{
 button, .nav-item, .member { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
 /* End of file */
+
+/* ============================
+   Custom Scrollbars (Dark, Dim)
+   ============================ */
+
+/* Applies to all scrollable elements */
+.tasks-list::-webkit-scrollbar,
+.inprogress-list::-webkit-scrollbar,
+.deadline-list::-webkit-scrollbar,
+.completed-list::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tasks-list::-webkit-scrollbar-track,
+.inprogress-list::-webkit-scrollbar-track,
+.deadline-list::-webkit-scrollbar-track,
+.completed-list::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track {
+    background: transparent; /* invisible track */
+}
+
+.tasks-list::-webkit-scrollbar-thumb,
+.inprogress-list::-webkit-scrollbar-thumb,
+.deadline-list::-webkit-scrollbar-thumb,
+.completed-list::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);    /* soft dim white */
+    border-radius: 10px;
+}
+
+/* Hover effect — still dim, but slightly more visible */
+.tasks-list::-webkit-scrollbar-thumb:hover,
+.inprogress-list::-webkit-scrollbar-thumb:hover,
+.deadline-list::-webkit-scrollbar-thumb:hover,
+.completed-list::-webkit-scrollbar-thumb:hover,
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ====== Fix: Prevent task-title overflow and keep text inside the card ====== */
+
+/* Ensure cards clip any overflow and respect padding */
+.card-style {
+  box-sizing: border-box;       /* should already be set globally, but ensure here */
+  overflow: hidden;             /* clip any overflowing text */
+  word-break: break-word;
+  hyphens: auto;
+}
+
+/* Title: wrap, break long words, limit to 3 lines (no vendor warnings) */
+.card-style .task-title {
+  display: block;
+  margin: 0 0 6px 0;
+  font-weight: 600;
+  color: #f8fafc;
+  /* responsive size but safe */
+  font-size: clamp(12px, calc(1vw + 8px), 13px);
+  line-height: 1.18;
+
+  /* wrap & break */
+  overflow: hidden;
+  text-overflow: ellipsis;      /* fallback */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;          /* IMPORTANT: allow wrapping */
+  max-height: calc(1.16em * 2);
+
+  /* clamp visually to 3 lines using max-height (no -webkit-line-clamp required) */
+  /*max-height: calc(1.18em * 3);  line-height * 3 lines */
+}
+
+/* Ensure the description/meta area does not force overflow */
+.card-style .task-meta,
+.card-style .task-desc {
+  display: block;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+}
+
+/* Make the date pill wrap nicely and not push container */
+.card-style .task-meta .meta-item {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Extra safety: ensure lists respect padding inside each column */
+.tasks-list > .card-style,
+.inprogress-list > .card-style,
+.deadline-list > .card-style {
+  min-width: 0;     /* allow shrinking properly inside flex column */
+}
+
+/* Optional: slightly reduce large titles visually on very narrow columns */
+@media (max-width:480px){
+  .card-style .task-title {
+    font-size: 12px;
+    max-height: calc(1.18em * 2); /* 2 lines on very small screens */
+  }
+}
