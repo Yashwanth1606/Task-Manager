@@ -185,6 +185,13 @@ function createTaskCard(task, showDescription = true) {
   t.setAttribute('draggable', 'true');
   t.dataset.taskId = String(task.id);
 
+  /* ✅ ADD PRIORITY DOT CODE HERE */
+    const p = (task.priority || '').toString().toLowerCase();
+    if (p === '1' || p === 'h' || p === 'high') t.dataset.priority = 'high';
+    else if (p === '2' || p === 'm' || p === 'medium') t.dataset.priority = 'medium';
+    else if (p === '3' || p === 'l' || p === 'low') t.dataset.priority = 'low';
+    /* END */
+
   // drag visuals
   t.addEventListener('dragstart', function (ev) {
     ev.dataTransfer.setData('text/plain', t.dataset.taskId);

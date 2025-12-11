@@ -500,6 +500,36 @@ button, .nav-item, .member { touch-action: manipulation; -webkit-tap-highlight-c
   /* clamp visually to 3 lines using max-height (no -webkit-line-clamp required) */
   /*max-height: calc(1.18em * 3);  line-height * 3 lines */
 }
+/* Priority marker (small dot before task title) */
+.card-style .task-title {
+  position: relative; /* ensure ::before uses card title as anchor */
+  padding-left: 18px; /* room for the marker */
+}
+
+/* base dot styles (uses pseudo-element so we don't change DOM) */
+.card-style .task-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06); /* default subtle dot if no priority set */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+/* color variants controlled by data attribute on the card */
+.card-style[data-priority="high"] .task-title::before { background: var(--danger); }     /* red = high */
+.card-style[data-priority="medium"] .task-title::before { background: var(--info); }    /* blue = medium */
+.card-style[data-priority="low"] .task-title::before { background: var(--success); }    /* green = low */
+
+/* optional: slightly stronger border for better contrast on dark background */
+.card-style[data-priority] .task-title::before {
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
 
 /* Ensure the description/meta area does not force overflow */
 .card-style .task-meta,
