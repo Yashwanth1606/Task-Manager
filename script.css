@@ -155,8 +155,8 @@ body{
 .top-right .date {
   position: absolute;       /* remove from document flow so it doesn't push content */
   z-index: 999;             /* stay on top of cards/header */
-  right: 160px;              /* align roughly with right edge of right-column; tweak if needed */
-  top: 70px;               /* <-- Tweak this value until the date sits exactly above Task Status */
+  right: 48px;              /* align roughly with right edge of right-column; tweak if needed */
+  top: 150px;               /* <-- Tweak this value until the date sits exactly above Task Status */
   font-size: 13px;
   color: var(--muted);
   white-space: nowrap;
@@ -399,6 +399,12 @@ body{
 .at-input, .at-textarea, .at-input[type="date"]{
   padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);font-size:14px;outline:none;background:linear-gradient(180deg,#0b0c0e,#0f1113);color:#e6eef6;
 }
+/* Make calendar icon visible on dark background */
+.at-input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);   /* turns black icon to white */
+    cursor: pointer;
+}
+
 .at-input:focus, .at-textarea:focus{box-shadow:0 6px 26px rgba(124,58,237,0.12);border-color:rgba(124,58,237,0.28)}
 .at-textarea{resize:vertical;min-height:110px}
 
@@ -459,7 +465,34 @@ button, .nav-item, .member { touch-action: manipulation; -webkit-tap-highlight-c
     position: relative;
     top: 30px;  
     font-size: 18px;
+ }
 
+ /* ===== Dark theme for Priority dropdown ===== */
+
+/* Select field (closed state) */
+.at-input select,
+.at-input[type="select"],
+select.at-input {
+    background: linear-gradient(180deg, #0b0c0e, #0f1113);
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Dropdown options */
+select.at-input option {
+    background-color: #0b0c0e;   /* black background */
+    color: #ffffff;              /* white text */
+}
+
+/* Hovered option */
+select.at-input option:hover {
+    background-color: #1a1d21;
+}
+
+/* Selected option */
+select.at-input option:checked {
+    background-color: #7c3aed;   /* purple accent */
+    color: #ffffff;
 }
 
 /* ============================
