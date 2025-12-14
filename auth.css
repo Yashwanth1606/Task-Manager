@@ -1,0 +1,96 @@
+/* Reuse dashboard colors */
+:root {
+  --bg: #0b0c0e;
+  --card: #101214;
+  --text: #e6eef6;
+  --muted: #9aa4b2;
+  --accent: #7c3aed;
+  --border: rgba(255,255,255,0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, Arial, sans-serif;
+  background: linear-gradient(180deg, var(--bg), #070708);
+  color: var(--text);
+  height: 100vh;
+}
+
+/* Center container */
+.auth-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card */
+.auth-card {
+  width: 360px;
+  padding: 28px;
+  background: linear-gradient(180deg, var(--card), #0e1113);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+/* Text */
+.auth-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: white;
+}
+
+.auth-subtitle {
+  margin: 6px 0 20px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Inputs */
+.auth-card input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  background: #0b0c0e;
+  border: 1px solid var(--border);
+  color: var(--text);
+  outline: none;
+}
+
+.auth-card input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(124,58,237,0.2);
+}
+
+/* Button */
+.auth-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 10px 30px rgba(124,58,237,0.3);
+}
+
+/* Footer */
+.auth-footer {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.auth-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}

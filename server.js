@@ -1,167 +1,300 @@
 const express = require('express');
 const cors = require('cors');
-const {google} = require('googleapis');
+const { google } = require('googleapis');
 const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const SHEET_ID = process.env.SHEET_ID || '1sYhF7hBK10Ri5Ksj8mpzzJshtsg0IXEm2i_vCC_g2vg';
-// Path to your downloaded service account JSON key. Use absolute path or set env var GOOGLE_APPLICATION_CREDENTIALS
-const KEYFILE = process.env.GOOGLE_APPLICATION_CREDENTIALS || path.join(__dirname, 'service-account.json');
+/* =========================
+   CONFIG
+========================= */
+const SHEET_ID =
+  process.env.SHEET_ID ||
+  '1sYhF7hBK10Ri5Ksj8mpzzJshtsg0IXEm2i_vCC_g2vg';
 
-async function getSheetsClient(){
+const KEYFILE =
+  process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+  path.join(__dirname, 'service-account.json');
+
+/* =========================
+   GOOGLE SHEETS CLIENT
+========================= */
+async function getSheetsClient() {
   const auth = new google.auth.GoogleAuth({
     keyFile: KEYFILE,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets']
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
   const authClient = await auth.getClient();
-  return google.sheets({version: 'v4', auth: authClient});
+  return google.sheets({ version: 'v4', auth: authClient });
 }
 
-// Helper: map rows to task objects assuming columns A..I:
-// A Date, B Time, C Task Name, D Description, E Priority, F Due Date, G Status, H Started, I CompletedAt
-function rowsToTasks(rows){
-  return (rows || []).map((r, idx) => ({
-    id: idx + 1,               // id maps to sheet data row index (1 => sheet row 2)
-    date: r[0] || '',
-    time: r[1] || '',
-    title: r[2] || '',
-    description: r[3] || '',
-    priority: r[4] || '',
-    dueDate: r[5] || '',
-    status: r[6] || '',
-    started: r[7] || '',     
-    completedAt: r[8] || '' 
-  }));
+/* =========================
+   USER ID GENERATOR
+========================= */
+function generateUserId(firstName, lastName, dob) {
+  const firstLetter = firstName.trim()[0].toUpperCase();
+  const lastLetter = lastName.trim()[0].toUpperCase();
+
+  const [dd, mm, yyyy] = dob.split('-').map(Number);
+  const dobSum = dd + mm + yyyy;
+
+  const now = new Date();
+  const todayDate = now.getDate();
+  const timeSum =
+    now.getHours() + now.getMinutes() + now.getSeconds();
+
+  return `${firstLetter}${lastLetter}${dobSum + todayDate + timeSum}`;
 }
 
+/* =========================
+   AUTH: REGISTER
+========================= */
+app.post('/register', async (req, res) => {
+  try {
+    const { firstName, lastName, dob, email, phone, password } = req.body;
 
-app.get('/tasks', async (req, res) => {
-  try{
+    if (!firstName || !lastName || !dob || !email || !password) {
+      return res.status(400).json({ ok: false, error: 'Missing fields' });
+    }
+
+    const userId = generateUserId(firstName, lastName, dob);
+    const registerDate = new Date().toISOString();
+
     const sheets = await getSheetsClient();
-    const range = 'Sheet1!A2:I';
-    const resp = await sheets.spreadsheets.values.get({ spreadsheetId: SHEET_ID, range });
-    const rows = resp.data.values || [];
-    return res.json({ok: true, tasks: rowsToTasks(rows)});
-  }catch(err){
+
+    const newRow = [
+      userId,
+      firstName,
+      lastName,
+      dob,
+      email,
+      phone || '',
+      registerDate,
+      password, // ⚠ plain text for now
+      '',
+      '',
+    ];
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: 'Users!A:J',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: [newRow] },
+    });
+
+    res.json({ ok: true, userId });
+  } catch (err) {
     console.error(err);
-    return res.status(500).json({ok:false, error: err.message});
+    res.status(500).json({ ok: false, error: err.message });
   }
 });
 
+/* =========================
+   AUTH: LOGIN
+========================= */
+app.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const sheets = await getSheetsClient();
+    const resp = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'Users!A:J',
+    });
+
+    const rows = resp.data.values || [];
+    const rowIndex = rows.findIndex(
+      (r) => r[4] === email && r[7] === password
+    );
+
+    if (rowIndex === -1) {
+      return res.status(401).json({ ok: false, error: 'Invalid credentials' });
+    }
+
+    const userRow = rows[rowIndex];
+    const loginTime = new Date().toISOString();
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `Users!I${rowIndex + 1}`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: [[loginTime]] },
+    });
+
+    res.json({
+      ok: true,
+      userId: userRow[0],
+      firstName: userRow[1],
+    });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+/* =========================
+   AUTH: LOGOUT
+========================= */
+app.post('/logout', async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const sheets = await getSheetsClient();
+    const resp = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'Users!A:J',
+    });
+
+    const rows = resp.data.values || [];
+    const rowIndex = rows.findIndex((r) => r[0] === userId);
+
+    if (rowIndex === -1) {
+      return res.status(404).json({ ok: false, error: 'User not found' });
+    }
+
+    const logoutTime = new Date().toISOString();
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `Users!J${rowIndex + 1}`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: [[logoutTime]] },
+    });
+
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+/* =========================
+   TASKS: GET (USER FILTERED)
+========================= */
+app.get('/tasks', async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    const sheets = await getSheetsClient();
+
+    const resp = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'Sheet1!A2:J',
+    });
+
+    const rows = resp.data.values || [];
+
+    const tasks = rows
+      .filter((r) => r[9] === userId)
+      .map((r, idx) => ({
+        id: idx + 1,
+        date: r[0],
+        time: r[1],
+        title: r[2],
+        description: r[3],
+        priority: r[4],
+        dueDate: r[5],
+        status: r[6],
+        started: r[7],
+        completedAt: r[8],
+      }));
+
+    res.json({ ok: true, tasks });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+/* =========================
+   TASKS: CREATE
+========================= */
 app.post('/tasks', async (req, res) => {
-  try{
-    const { title, description, priority, dueDate, status } = req.body;
-    if(!title) return res.status(400).json({ok:false, error: 'title required'});
+  try {
+    const { title, description, priority, dueDate, status, userId } = req.body;
+    if (!title || !userId) {
+      return res.status(400).json({ ok: false, error: 'Missing data' });
+    }
 
     const now = new Date();
-    const isoDate = now.toISOString().split('T')[0]; // YYYY-MM-DD
-    const time = now.toTimeString().split(' ')[0]; // HH:MM:SS
+    const isoDate = now.toISOString().split('T')[0];
+    const time = now.toTimeString().split(' ')[0];
 
-    const newRow = [isoDate, time, title, description || '', priority || '', dueDate || '', status || 'Not Started', '', ''];
+    const newRow = [
+      isoDate,
+      time,
+      title,
+      description || '',
+      priority || '',
+      dueDate || '',
+      status || 'Not Started',
+      '',
+      '',
+      userId,
+    ];
 
     const sheets = await getSheetsClient();
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: 'Sheet1!A:I',
+      range: 'Sheet1!A:J',
       valueInputOption: 'USER_ENTERED',
-      requestBody: { values: [newRow] }
+      requestBody: { values: [newRow] },
     });
 
-    return res.json({ok:true, appended: newRow});
-  }catch(err){
-    console.error(err);
-    return res.status(500).json({ok:false, error: err.message});
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
   }
 });
 
-// PATCH /tasks/:id  -> update task status in column G and set timestamps in H/I
+/* =========================
+   TASKS: STATUS UPDATE
+========================= */
 app.patch('/tasks/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
-    if (!Number.isInteger(id) || id < 1) {
-      return res.status(400).json({ ok: false, error: 'invalid id' });
-    }
     const { status } = req.body;
-    if (typeof status !== 'string') {
-      return res.status(400).json({ ok: false, error: 'status required' });
+    if (!id || !status) {
+      return res.status(400).json({ ok: false, error: 'Invalid data' });
     }
 
     const sheets = await getSheetsClient();
-
-    // spreadsheet row to update (data rows start at row 2, so id 1 -> row 2)
     const sheetRow = id + 1;
-    const statusRange = `Sheet1!G${sheetRow}`; // column G = Status
+    const now = new Date().toISOString();
 
-    // Prepare timestamp logic
-    const now = new Date();
-    const isoTs = now.toISOString(); // e.g. 2025-12-07T10:23:00.000Z
-
-    // Always update the Status cell first
     await sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
-      range: statusRange,
+      range: `Sheet1!G${sheetRow}`,
       valueInputOption: 'USER_ENTERED',
-      requestBody: { values: [[ status ]] }
+      requestBody: { values: [[status]] },
     });
 
-    // If status becomes "In Progress" -> set Started (column H) but only if empty
-  if (status === 'In Progress') {
-    const startedRange = `Sheet1!H${sheetRow}`;
-    // read current value
-    const startedResp = await sheets.spreadsheets.values.get({
-      spreadsheetId: SHEET_ID,
-      range: startedRange
-    });
-    const current = (startedResp.data.values && startedResp.data.values[0] && startedResp.data.values[0][0]) || '';
-    if (!current) {
+    if (status === 'In Progress') {
       await sheets.spreadsheets.values.update({
         spreadsheetId: SHEET_ID,
-        range: startedRange,
+        range: `Sheet1!H${sheetRow}`,
         valueInputOption: 'USER_ENTERED',
-        requestBody: { values: [[ isoTs ]] }
+        requestBody: { values: [[now]] },
       });
     }
-  }
 
-
-    // If status becomes "Completed" -> set CompletedAt (column I)
     if (status === 'Completed') {
-      const completedRange = `Sheet1!I${sheetRow}`;
       await sheets.spreadsheets.values.update({
         spreadsheetId: SHEET_ID,
-        range: completedRange,
+        range: `Sheet1!I${sheetRow}`,
         valueInputOption: 'USER_ENTERED',
-        requestBody: { values: [[ isoTs ]] }
+        requestBody: { values: [[now]] },
       });
     }
 
-    // Optional: if you move a task back to Not Started, you may want to clear H and I.
-    // Uncomment the block below if you want that behaviour:
-    
-    if (status === 'Not Started') {
-      await sheets.spreadsheets.values.batchUpdate({
-        spreadsheetId: SHEET_ID,
-        requestBody: {
-          valueInputOption: 'USER_ENTERED',
-          data: [
-            { range: `Sheet1!H${sheetRow}`, values: [['']] },
-            { range: `Sheet1!I${sheetRow}`, values: [['']] }
-          ]
-        }
-      });
-    }
-    
-
-    return res.json({ ok: true, id, status });
+    res.json({ ok: true });
   } catch (err) {
-    console.error('PATCH /tasks/:id error', err);
-    return res.status(500).json({ ok: false, error: err.message });
+    res.status(500).json({ ok: false, error: err.message });
   }
 });
 
-
+/* =========================
+   SERVER START
+========================= */
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
+app.listen(PORT, () =>
+  console.log(`✅ Server running at http://localhost:${PORT}`)
+);

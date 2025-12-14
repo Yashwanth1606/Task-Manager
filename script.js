@@ -1,5 +1,6 @@
 // script.js - renders tasks and status donuts and includes examples for Google Sheets fetching
 
+
 // Helper function to get today's date as YYYY-MM-DD string
 function getTodayDateString() {
   const now = new Date();
@@ -8,6 +9,36 @@ function getTodayDateString() {
   const dd = String(now.getDate()).padStart(2, '0');
   return `${yyyy}-${mm}-${dd}`;
 }
+
+const logoutBtn = document.querySelector('.logout');
+
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', async () => {
+    const userId = localStorage.getItem('userId');
+
+    try {
+      await fetch('http://localhost:3000/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+    } catch (e) {
+      console.warn('Logout API failed');
+    }
+
+    localStorage.clear();
+    window.location.href = 'login.html';
+  });
+}
+const firstName = localStorage.getItem('firstName');
+const nameEl = document.querySelector('.profile .name');
+const welcomeNameEl = document.querySelector('.welcome-name');
+
+if (firstName) {
+  if (nameEl) nameEl.textContent = firstName;
+  if (welcomeNameEl) welcomeNameEl.textContent = firstName;
+}
+
 
 // Task model now includes: id, title, description, priority, status, created, started, deadline, completedAt
 const sampleTasks = [
@@ -70,7 +101,9 @@ const sampleTasks = [
 
 async function loadTasksFromServer() {
   try {
-    const res = await fetch('http://localhost:3000/tasks');
+    const userId = localStorage.getItem('userId');
+    const res = await fetch(`http://localhost:3000/tasks?userId=${userId}`);
+
     if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
     const data = await res.json();
 
@@ -664,7 +697,16 @@ async function updateTaskStatusOnServer(id, newStatus) {
         const res = await fetch("http://localhost:3000/tasks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, description, priority, dueDate, status })
+
+          body: JSON.stringify({
+            title,
+            description,
+            priority,
+            dueDate,
+            status,
+            userId
+          })
+
         });
 
         if (!res.ok) throw new Error('Network error: ' + res.status);
