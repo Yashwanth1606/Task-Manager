@@ -10,6 +10,11 @@ if (loginForm) {
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
 
+    if (!email || !password) {
+      alert('Please enter email and password');
+      return;
+    }
+
     try {
       const res = await fetch('http://localhost:3000/login', {
         method: 'POST',
@@ -24,16 +29,16 @@ if (loginForm) {
         return;
       }
 
-      // ✅ SAVE LOGIN STATE
+      // ✅ Save login session
       localStorage.setItem('userId', data.userId);
       localStorage.setItem('firstName', data.firstName);
 
-      // redirect to dashboard
+      // Redirect to dashboard
       window.location.href = 'index.html';
 
     } catch (err) {
       console.error(err);
-      alert('Server error');
+      alert('Server error. Is backend running?');
     }
   });
 }
@@ -47,13 +52,19 @@ if (registerForm) {
   registerForm.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const fullName = document.getElementById('registerName').value.trim();
+    // Read form values
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const dob = document.getElementById('dob').value; // yyyy-mm-dd
     const email = document.getElementById('registerEmail').value.trim();
+    const phone = document.getElementById('phone').value.trim();
     const password = document.getElementById('registerPassword').value.trim();
 
-    const parts = fullName.split(' ');
-    const firstName = parts[0];
-    const lastName = parts.slice(1).join(' ') || 'U';
+    // Basic validation
+    if (!firstName || !lastName || !dob || !email || !phone || !password) {
+      alert('Please fill all fields');
+      return;
+    }
 
     try {
       const res = await fetch('http://localhost:3000/register', {
@@ -62,9 +73,9 @@ if (registerForm) {
         body: JSON.stringify({
           firstName,
           lastName,
-          dob: '01-01-2000', // TEMP — update later
+          dob,
           email,
-          phone: '',
+          phone,
           password
         })
       });
@@ -81,7 +92,7 @@ if (registerForm) {
 
     } catch (err) {
       console.error(err);
-      alert('Server error');
+      alert('Server error. Is backend running?');
     }
   });
 }
