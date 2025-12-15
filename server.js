@@ -7,9 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* =========================
-   CONFIG
-========================= */
+
 const SHEET_ID =
   process.env.SHEET_ID ||
   '1sYhF7hBK10Ri5Ksj8mpzzJshtsg0IXEm2i_vCC_g2vg';
@@ -30,9 +28,6 @@ async function getSheetsClient() {
   return google.sheets({ version: 'v4', auth: authClient });
 }
 
-/* =========================
-   USER ID GENERATOR
-========================= */
 function generateUserId(firstName, lastName, dob) {
   const firstLetter = firstName.trim()[0].toUpperCase();
   const lastLetter = lastName.trim()[0].toUpperCase();
