@@ -122,6 +122,7 @@ app.post('/login', async (req, res) => {
       ok: true,
       userId: userRow[0],
       firstName: userRow[1],
+      lastName: userRow[2],
     });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });

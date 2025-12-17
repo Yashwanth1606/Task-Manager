@@ -32,6 +32,11 @@ if (loginForm) {
       // ✅ Save login session
       localStorage.setItem('userId', data.userId);
       localStorage.setItem('firstName', data.firstName);
+      localStorage.setItem('lastName', data.lastName);
+      localStorage.setItem(
+        'fullName',
+        `${data.firstName} ${data.lastName}`
+      );
 
       // Redirect to dashboard
       window.location.href = 'index.html';

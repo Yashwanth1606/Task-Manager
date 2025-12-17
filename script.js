@@ -30,15 +30,27 @@ if (logoutBtn) {
     window.location.href = 'login.html';
   });
 }
-const firstName = localStorage.getItem('firstName');
-const nameEl = document.querySelector('.profile .name');
 const welcomeNameEl = document.querySelector('.welcome-name');
 
-if (firstName) {
-  if (nameEl) nameEl.textContent = firstName;
-  if (welcomeNameEl) welcomeNameEl.textContent = firstName;
+function toProperCase(name) {
+  return String(name || '')
+    .toLowerCase()
+    .split(' ')
+    .filter(Boolean)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }
 
+const rawName =
+  localStorage.getItem('fullName') ||
+  `${localStorage.getItem('firstName') || ''} ${localStorage.getItem('lastName') || ''}`.trim() ||
+  'User';
+
+const displayName = toProperCase(rawName);
+
+if (welcomeNameEl) {
+  welcomeNameEl.textContent = displayName;
+}
 
 // Task model now includes: id, title, description, priority, status, created, started, deadline, completedAt
 const sampleTasks = [
@@ -179,7 +191,6 @@ function syncProfileDisplay(){
   }
 
   if(avatarEl) avatarEl.textContent = initials;
-  if(welcomeNameEl) welcomeNameEl.textContent = firstName;
 
   const emailEl = document.querySelector('.profile .email');
   if(emailEl && avatarEl){
