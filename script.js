@@ -200,6 +200,29 @@ function syncProfileDisplay(){
   }
 }
 
+// ===== Avatar initials (USER BASED, NOT WEBSITE NAME) =====
+const avatarEl = document.querySelector('.top-right .avatar');
+
+function getInitials(name) {
+  return String(name || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(word => word[0].toUpperCase())
+    .join('');
+}
+
+const avatarName =
+  localStorage.getItem('fullName') ||
+  localStorage.getItem('firstName') ||
+  'U';
+
+if (avatarEl) {
+  avatarEl.textContent = getInitials(avatarName);
+}
+
+
 // DOM element references (these must exist before calling loadTasksFromServer/renderTasks)
 const tasksListEl = document.querySelector('.tasks-list');
 const inprogressListEl = document.querySelector('.inprogress-list');
@@ -212,7 +235,7 @@ const pctNotStartedEl = document.getElementById('pctNotStarted');
 // Start the app after DOM nodes and helpers are defined
 loadTasksFromServer();
 updateHeaderDate();
-syncProfileDisplay();
+//syncProfileDisplay();
 
 // utility: title case
 function toTitleCase(str) {

@@ -31,12 +31,25 @@ if (loginForm) {
 
       // ✅ Save login session
       localStorage.setItem('userId', data.userId);
-      localStorage.setItem('firstName', data.firstName);
-      localStorage.setItem('lastName', data.lastName);
-      localStorage.setItem(
-        'fullName',
-        `${data.firstName} ${data.lastName}`
-      );
+      if (data.firstName) {
+        localStorage.setItem('firstName', data.firstName);
+      } else {
+        localStorage.removeItem('firstName');
+      }
+
+      if (data.lastName) {
+        localStorage.setItem('lastName', data.lastName);
+      } else {
+        localStorage.removeItem('lastName');
+      }
+
+      const first = (data.firstName || '').trim();
+      const last = (data.lastName || '').trim();
+
+      const fullName = last ? `${first} ${last}` : first;
+
+      localStorage.setItem('fullName', fullName);
+
 
       // Redirect to dashboard
       window.location.href = 'index.html';
