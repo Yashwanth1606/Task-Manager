@@ -180,19 +180,21 @@ app.get('/tasks', async (req, res) => {
     const rows = resp.data.values || [];
 
     const tasks = rows
-      .filter((r) => r[9] === userId)
-      .map((r, idx) => ({
-        id: idx + 1,
-        date: r[0],
-        time: r[1],
-        title: r[2],
-        description: r[3],
-        priority: r[4],
-        dueDate: r[5],
-        status: r[6],
-        started: r[7],
-        completedAt: r[8],
-      }));
+  .map((r, index) => ({ row: index + 2, r })) // +2 because data starts at row 2
+  .filter(({ r }) => r[9] === userId)
+  .map(({ row, r }) => ({
+    id: row, // ✅ REAL sheet row number
+    date: r[0],
+    time: r[1],
+    title: r[2],
+    description: r[3],
+    priority: r[4],
+    dueDate: r[5],
+    status: r[6],
+    started: r[7],
+    completedAt: r[8],
+  }));
+
 
     res.json({ ok: true, tasks });
   } catch (err) {
@@ -246,14 +248,14 @@ app.post('/tasks', async (req, res) => {
 ========================= */
 app.patch('/tasks/:id', async (req, res) => {
   try {
-    const id = Number(req.params.id);
+    const sheetRow = Number(req.params.id); // ✅ REAL row number
     const { status } = req.body;
-    if (!id || !status) {
+
+    if (!sheetRow || !status) {
       return res.status(400).json({ ok: false, error: 'Invalid data' });
     }
 
     const sheets = await getSheetsClient();
-    const sheetRow = id + 1;
     const now = new Date().toISOString();
 
     await sheets.spreadsheets.values.update({
@@ -286,6 +288,7 @@ app.patch('/tasks/:id', async (req, res) => {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
+
 
 /* =========================
    SERVER START
