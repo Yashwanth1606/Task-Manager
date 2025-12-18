@@ -228,7 +228,7 @@ const tasksListEl = document.querySelector('.tasks-list');
 const inprogressListEl = document.querySelector('.inprogress-list');
 const deadlineListEl = document.querySelector('.deadline-list');
 const completedListEl = document.getElementById('completedList');
-const pctCompletedEl = document.getElementById('pctCompleted');
+const pctPendingEl = document.getElementById('pctPending');
 const pctInProgressEl = document.getElementById('pctInProgress');
 const pctNotStartedEl = document.getElementById('pctNotStarted');
 
@@ -339,7 +339,12 @@ function renderTasks(tasks){
   if (completedListEl) completedListEl.innerHTML = '';
 
   const today = getTodayDateString();
-  let tasksCount = 0, inProgressCount = 0, deadlineCount = 0, completedCount = 0;
+  let notStartedCount = 0;
+  let inProgressCount = 0;
+  let completedCount = 0;
+  let deadlineCount = 0;
+
+
 
   const completedTasks = [];
 
@@ -354,8 +359,8 @@ function renderTasks(tasks){
     }
 
     // TASKS column → Not Started
-    if (status === 'Not Started') {
-      tasksCount++;
+      if (status === 'Not Started') {
+        notStartedCount++;
       if (tasksListEl) tasksListEl.appendChild(createTaskCard(task, false));
     }
 
@@ -466,18 +471,21 @@ function renderTasks(tasks){
 
   // Update status percentages
   const totalCount = tasks.length || 1;
-  const pctCompleted = Math.round((completedCount / totalCount) * 100);
-  const pctInProgress = Math.round((inProgressCount / totalCount) * 100);
-  const pctNotStarted = Math.round((tasksCount / totalCount) * 100);
+  const pendingCount = totalCount - completedCount || 1;
 
-  if (pctCompletedEl) pctCompletedEl.textContent = `${pctCompleted}%`;
+  const pctPending = Math.round((pendingCount / totalCount) * 100);
+  const pctInProgress = Math.round((inProgressCount / pendingCount) * 100);
+  const pctNotStarted = Math.round((notStartedCount / pendingCount) * 100);
+
+
+  if (pctPendingEl) pctPendingEl.textContent = `${pctPending}%`;
   if (pctInProgressEl) pctInProgressEl.textContent = `${pctInProgress}%`;
   if (pctNotStartedEl) pctNotStartedEl.textContent = `${pctNotStarted}%`;
 
   // Update donut visuals
   document.querySelectorAll('.donut').forEach((d, i) => {
     let pct = 0;
-    if (i === 0) pct = pctCompleted;
+    if (i === 0) pct = pctPending;
     if (i === 1) pct = pctInProgress;
     if (i === 2) pct = pctNotStarted;
     d.style.setProperty('--pct', pct);
