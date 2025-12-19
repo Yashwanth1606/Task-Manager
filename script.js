@@ -432,7 +432,8 @@ function renderTasks(tasks){
 
     // Build new completed item markup: Title, duration, deadline flag
     const citem = document.createElement('div');
-    citem.className = 'completed-item completed-item--detailed';
+    citem.className = 'completed-item completed-item--detailed animate-in';
+
 
     citem.innerHTML = `
       <div class="info">
@@ -567,7 +568,8 @@ function enableTaskDragAndDrop() {
       if (String(col.status).toLowerCase() === 'completed') {
         // create a completed-style placeholder so the completed column shows green immediately
         placeholder = document.createElement('div');
-        placeholder.className = 'completed-item completed-item--detailed';
+        placeholder.className = 'completed-item completed-item--detailed animate-in pulse';
+
         // show title and a "Completing..." meta while waiting for server
         const safeTitle = (draggedEl.querySelector('.task-title') && draggedEl.querySelector('.task-title').textContent) || draggedEl.textContent || 'Completed task';
         placeholder.innerHTML = `
