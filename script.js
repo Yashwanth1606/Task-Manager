@@ -22,7 +22,7 @@ if (logoutBtn) {
     const userId = localStorage.getItem('userId');
 
     try {
-      await fetch('${API_BASE}/logout', {
+      await fetch(`${API_BASE}/logout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId })
@@ -743,7 +743,7 @@ async function updateTaskStatusOnServer(id, newStatus) {
       }
 
       try {
-        const res = await fetch("${API_BASE}/tasks", {
+        const res = await fetch(`${API_BASE}/tasks`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
 
