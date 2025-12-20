@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Focus Time</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Reuse existing styles -->
+  <link rel="stylesheet" href="script.css">
+  <link rel="stylesheet" href="focus.css">
+</head>
+<body>
+
+  <div class="focus-page">
+
+    <header class="focus-header">
+      <h2>Focus Time</h2>
+      <button onclick="window.location.href='index.html'">← Back</button>
+    </header>
+
+    <div class="focus-container">
+
+      <!-- LEFT: TASK SELECTOR -->
+      <div class="focus-card">
+        <h3>Select Task</h3>
+        <input
+          type="text"
+          id="taskSearch"
+          placeholder="Search your task..."
+        />
+        <div id="taskList" class="focus-task-list"></div>
+      </div>
+
+      <!-- RIGHT: TIMER -->
+      <div class="focus-card">
+        <h3>Focus Timer</h3>
+
+        <select id="focusDuration">
+          <option value="25">25 minutes</option>
+          <option value="45">45 minutes</option>
+          <option value="60">60 minutes</option>
+        </select>
+
+        <div id="timerDisplay">25:00</div>
+
+        <div class="timer-buttons">
+          <button id="startTimer">Start</button>
+          <button id="pauseTimer">Pause</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="focus.js"></script>
+</body>
+</html>

@@ -776,3 +776,12 @@ async function updateTaskStatusOnServer(id, newStatus) {
   }
 
 })(); // end IIFE
+
+// Focus Time navigation
+const focusBtn = document.getElementById('focusTimeBtn');
+if (focusBtn) {
+  focusBtn.addEventListener('click', () => {
+    window.location.href = 'Focus.html';
+  });
+}
+

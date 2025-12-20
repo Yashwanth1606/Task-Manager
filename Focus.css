@@ -1,0 +1,83 @@
+.focus-page {
+  height: 100vh;
+  padding: 20px;
+  background: linear-gradient(180deg, #0b0c0e, #070708);
+  color: #e6eef6;
+}
+
+.focus-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.focus-container {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 100px);
+}
+
+.focus-card {
+  flex: 1;
+  background: linear-gradient(180deg, #101214, #0e1113);
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.focus-card h3 {
+  margin-bottom: 12px;
+}
+
+#taskSearch {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: #0b0c0e;
+  color: white;
+  margin-bottom: 12px;
+}
+
+.focus-task-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.focus-task {
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+}
+
+.focus-task:hover {
+  background: rgba(124,58,237,0.15);
+}
+
+#timerDisplay {
+  font-size: 48px;
+  text-align: center;
+  margin: 30px 0;
+}
+
+.timer-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.timer-buttons button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #7c3aed;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
