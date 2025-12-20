@@ -785,3 +785,10 @@ if (focusBtn) {
   });
 }
 
+// My Tasks navigation
+const myTaskBtn = document.getElementById('myTaskBtn');
+if (myTaskBtn) {
+  myTaskBtn.addEventListener('click', () => {
+    window.location.href = 'my-tasks.html';
+  });
+}
