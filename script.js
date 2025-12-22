@@ -236,11 +236,51 @@ const completedListEl = document.getElementById('completedList');
 const pctPendingEl = document.getElementById('pctPending');
 const pctInProgressEl = document.getElementById('pctInProgress');
 const pctNotStartedEl = document.getElementById('pctNotStarted');
+const searchInput = document.getElementById('search');
+const searchClearBtn = document.getElementById('searchClear');
+
+function applySearchFilter(query) {
+  query = query.trim().toLowerCase();
+
+  // 🔹 If search is empty → restore full view
+  if (!query) {
+    renderTasks(window.currentTasks || []);
+    return;
+  }
+
+  // 🔹 Filter tasks by title (case-insensitive)
+  const filteredTasks = (window.currentTasks || []).filter(task =>
+    (task.title || '').toLowerCase().includes(query)
+  );
+
+  // 🔹 Render ONLY task columns (donuts remain unchanged)
+  renderTasksWithoutDonuts(filteredTasks);
+}
+
+
 
 // Start the app after DOM nodes and helpers are defined
 loadTasksFromServer();
 updateHeaderDate();
 //syncProfileDisplay();
+
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
+    const value = searchInput.value.trim();
+
+    searchClearBtn.style.display = value ? 'block' : 'none';
+    applySearchFilter(value);
+  });
+}
+
+if (searchClearBtn) {
+  searchClearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    searchClearBtn.style.display = 'none';
+    renderTasks(window.currentTasks || []);
+  });
+}
+
 
 // utility: title case
 function toTitleCase(str) {
@@ -499,7 +539,42 @@ function renderTasks(tasks){
     d.style.setProperty('--c', color);
     d.style.background = `conic-gradient(${color} ${pct}%, #e6eef6 ${pct}%)`;
   });
+
 }
+
+function renderTasksWithoutDonuts(tasks) {
+  // Clear only task columns
+  if (tasksListEl) tasksListEl.innerHTML = '';
+  if (inprogressListEl) inprogressListEl.innerHTML = '';
+  if (deadlineListEl) deadlineListEl.innerHTML = '';
+
+  const today = getTodayDateString();
+
+  tasks.forEach(task => {
+    const status = (task.status || '').trim();
+
+    // Skip completed
+    if (status === 'Completed') return;
+
+    // Tasks → Not Started
+    if (status === 'Not Started') {
+      if (tasksListEl) tasksListEl.appendChild(createTaskCard(task, false));
+    }
+
+    // In Progress
+    if (status === 'In Progress') {
+      if (inprogressListEl) inprogressListEl.appendChild(createTaskCard(task, false));
+    }
+
+    // Deadline = today
+    const normalized = normalizeDateString(task.deadline);
+    if (normalized === today) {
+      if (deadlineListEl) deadlineListEl.appendChild(createTaskCard(task, false));
+    }
+  });
+}
+
+
 
 // --- Drag & Drop wiring for Tasks -> In Progress -> Completed (deadline column read-only) ---
 function enableTaskDragAndDrop() {

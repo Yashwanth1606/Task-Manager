@@ -180,6 +180,28 @@ select {
   box-shadow: 0 8px 30px rgba(124,58,237,0.18);
 }
 
+.search-wrapper {
+  position: relative;
+}
+
+#searchClear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #9aa4b2;
+  font-size: 14px;
+  cursor: pointer;
+  display: none; /* hidden by default */
+}
+
+#searchClear:hover {
+  color: #ffffff;
+}
+
+
 .top-right .date {
   position: absolute;       /* remove from document flow so it doesn't push content */
   z-index: 999;             /* stay on top of cards/header */
