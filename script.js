@@ -5,8 +5,6 @@ const API_BASE =
     ? "http://localhost:3000"
     : "https://taskmanager-05hb.onrender.com";
 
-
-// Helper function to get today's date as YYYY-MM-DD string
 function getTodayDateString() {
   const now = new Date();
   const yyyy = now.getFullYear();
