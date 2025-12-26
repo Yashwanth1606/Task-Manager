@@ -189,7 +189,7 @@ app.get('/tasks', async (req, res) => {
   .map((r, index) => ({ row: index + 2, r })) // +2 because data starts at row 2
   .filter(({ r }) => r[9] === userId)
   .map(({ row, r }) => ({
-    id: row, // ✅ REAL sheet row number
+    id: row,
     date: r[0],
     time: r[1],
     title: r[2],

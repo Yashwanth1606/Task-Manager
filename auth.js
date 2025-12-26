@@ -57,8 +57,6 @@ if (loginForm) {
 
       localStorage.setItem('fullName', fullName);
 
-
-      // Redirect to dashboard
       window.location.href = 'index.html';
 
     } catch (err) {

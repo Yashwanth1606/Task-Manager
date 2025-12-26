@@ -130,10 +130,7 @@ async function loadTasksFromServer() {
       priority: t.priority || 'Low',
       status: t.status || 'Not Started',
 
-      // use sheet "Date" column as created date (A)
       created: t.date || getTodayDateString(),
-
-      // read started/completed from the sheet fields (H/I)
       started: t.started || null,
 
       // use sheet "Due Date" column as deadline (F)
