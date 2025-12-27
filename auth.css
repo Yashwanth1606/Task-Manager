@@ -94,3 +94,26 @@ body {
   color: var(--accent);
   text-decoration: none;
 }
+
+/* =========================
+   AUTH BUTTON PRESS FEEDBACK
+========================= */
+
+.auth-btn {
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background-color 0.12s ease;
+}
+
+/* Mouse / touch press */
+.auth-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Keyboard accessibility (Enter / Tab) */
+.auth-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(13, 187, 123, 0.4);
+}
