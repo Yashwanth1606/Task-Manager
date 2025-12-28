@@ -36,7 +36,7 @@ if (loginForm) {
         return;
       }
 
-      // ✅ Save login session
+      // Save login session
       localStorage.setItem('userId', data.userId);
       if (data.firstName) {
         localStorage.setItem('firstName', data.firstName);

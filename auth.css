@@ -112,7 +112,7 @@ body {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
 }
 
-/* Keyboard accessibility (Enter / Tab) */
+/* Keyboard accessibility focus */
 .auth-btn:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(13, 187, 123, 0.4);
