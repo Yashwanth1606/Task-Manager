@@ -488,7 +488,10 @@ select {
   .nav{align-items:center}
   .nav-item{padding:8px;width:44px;height:44px;justify-content:center;border-radius:var(--nav-radius)}
   .nav-item .nav-text{display:none}
-  .right-column{display:none}
+  .right-column{
+    display: flex;
+    margin-top: 18px;
+  }
   .search-area input{width:120px}
 }
 
@@ -903,3 +906,58 @@ select.at-input option:checked {
   animation: successPulse 1.2s ease-in-out;
 }
 
+@media (max-width: 520px) {
+
+  .nav-item {
+    position: relative;
+  }
+
+  .nav-item::after {
+    content: attr(aria-label);
+    position: absolute;
+    left: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #0b0c0e;
+    color: #e6eef6;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    transition: opacity 0.15s ease;
+    z-index: 1000;
+  }
+
+  .nav-item:hover::after {
+    opacity: 1;
+  }
+}
+@media (max-width: 980px) {
+
+  .content-grid {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .left-column {
+    width: 100%;
+  }
+
+  .right-column {
+    width: 100%;
+    flex: none;
+  }
+}
+@media (max-width: 980px) {
+  body {
+    overflow-y: auto;
+  }
+
+  .app {
+    height: auto;
+    min-height: 100vh;
+  }
+}
