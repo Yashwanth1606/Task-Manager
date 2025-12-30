@@ -961,3 +961,11 @@ select.at-input option:checked {
     min-height: 100vh;
   }
 }
+
+/* =========================
+   Focus Page Search Support
+   ========================= */
+
+.focus-page .search-area {
+  margin-bottom: 12px;
+}

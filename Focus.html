@@ -15,21 +15,33 @@
 
     <header class="focus-header">
       <h2>Focus Time</h2>
-      <button onclick="window.location.href='index.html'">← Back</button>
+      <button
+        class="focus-back-btn"
+        onclick="window.location.href='index.html'"
+      >
+        ← Back
+      </button>
+
     </header>
 
     <div class="focus-container">
 
-      <!-- LEFT: TASK SELECTOR -->
-      <div class="focus-card">
-        <h3>Select Task</h3>
-        <input
-          type="text"
-          id="taskSearch"
-          placeholder="Search your task..."
-        />
-        <div id="taskList" class="focus-task-list"></div>
-      </div>
+<div class="focus-card">
+  <h3>Select Task</h3>
+
+  <div class="search-area">
+    <div class="search-wrapper">
+      <input
+        id="taskSearch"
+        placeholder="Search your task here..."
+      />
+      <button id="searchClear" aria-label="Clear search">✕</button>
+    </div>
+  </div>
+
+  <div id="taskList" class="focus-task-list"></div>
+</div>
+
 
       <!-- RIGHT: TIMER -->
       <div class="focus-card">
