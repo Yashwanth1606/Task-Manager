@@ -8,6 +8,11 @@ const API_BASE =
 const userId = localStorage.getItem('userId');
 const taskListEl = document.getElementById('taskList');
 const searchInput = document.getElementById('taskSearch');
+let remaining = 25 * 60;
+const ring = document.querySelector('.focus-ring-progress');
+const RING_CIRCUMFERENCE = 603; // must match CSS
+let totalSeconds = remaining;
+
 
 let allTasks = [];
 let selectedTask = null;
@@ -60,21 +65,34 @@ searchInput.addEventListener('input', () => {
    TIMER
 ========================= */
 let timer = null;
-let remaining = 25 * 60;
+
 
 const display = document.getElementById('timerDisplay');
 const durationSelect = document.getElementById('focusDuration');
 
 durationSelect.addEventListener('change', () => {
-  remaining = Number(durationSelect.value) * 60;
+  totalSeconds = Number(durationSelect.value) * 60;
+  remaining = totalSeconds;
   updateDisplay();
+  updateRing();
 });
+
 
 function updateDisplay() {
   const m = Math.floor(remaining / 60);
   const s = remaining % 60;
   display.textContent = `${m}:${String(s).padStart(2,'0')}`;
 }
+
+function updateRing() {
+  if (!ring) return;
+
+  const progress = 1 - remaining / totalSeconds;
+  const offset = RING_CIRCUMFERENCE * (1 - progress);
+
+  ring.style.strokeDashoffset = offset;
+}
+
 
 document.getElementById('startTimer').onclick = () => {
   if (!selectedTask) {
@@ -84,14 +102,17 @@ document.getElementById('startTimer').onclick = () => {
   if (timer) return;
 
   timer = setInterval(() => {
-    remaining--;
-    updateDisplay();
-    if (remaining <= 0) {
-      clearInterval(timer);
-      timer = null;
-      alert('Focus session completed 🎉');
-    }
-  }, 1000);
+  remaining--;
+  updateDisplay();
+  updateRing();
+
+  if (remaining <= 0) {
+    clearInterval(timer);
+    timer = null;
+    alert('Focus session completed 🎉');
+  }
+}, 1000);
+
 };
 
 document.getElementById('pauseTimer').onclick = () => {
@@ -101,3 +122,5 @@ document.getElementById('pauseTimer').onclick = () => {
 
 loadTasks();
 updateDisplay();
+updateRing();
+

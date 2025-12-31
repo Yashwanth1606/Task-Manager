@@ -194,3 +194,57 @@
 .focus-header .focus-back-btn {
   margin-left: auto;
 }
+/* =========================
+   Focus Progress Ring
+   ========================= */
+
+.focus-ring-wrapper {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 20px auto 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.focus-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotate(-90deg);
+}
+
+/* Background ring */
+.focus-ring-bg {
+  fill: none;
+  stroke: rgba(255,255,255,0.08);
+  stroke-width: 14;
+}
+
+/* Progress ring */
+.focus-ring-progress {
+  fill: none;
+  stroke: #7c3aed;
+  stroke-width: 14;
+  stroke-linecap: round;
+
+  stroke-dasharray: 603; /* 2πr (r=96) */
+  stroke-dashoffset: 603;
+
+  transition: stroke-dashoffset 0.4s linear;
+}
+
+/* Timer text centered inside ring */
+.focus-ring-wrapper #timerDisplay {
+  position: relative;
+  z-index: 2;
+
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+
+  font-size: 48px;
+}
