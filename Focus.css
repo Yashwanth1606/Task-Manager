@@ -295,3 +295,61 @@
   background-color: #7c3aed;
   color: #ffffff;
 }
+/* =========================
+   Expanded Focus Task View
+   ========================= */
+
+/* Hide task list when expanded */
+.focus-task-list.hidden {
+  display: none;
+}
+
+/* Expanded task container */
+.focus-task-expanded {
+  margin-top: 16px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.04),
+    rgba(255,255,255,0.02)
+  );
+
+  border-radius: 16px;
+  padding: 20px;
+
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+/* Expanded title */
+.focus-task-expanded h4 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Meta info (created / due) */
+.focus-task-meta {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.focus-task-meta span {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #e6eef6;
+}
+
+/* Description */
+.focus-task-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(230,238,246,0.9);
+}

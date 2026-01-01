@@ -7,11 +7,13 @@ const API_BASE =
 
 const userId = localStorage.getItem('userId');
 const taskListEl = document.getElementById('taskList');
+const expandedTaskEl = document.getElementById('expandedTask');
 const searchInput = document.getElementById('taskSearch');
 let remaining = 25 * 60;
 const ring = document.querySelector('.focus-ring-progress');
 const RING_CIRCUMFERENCE = 603; // must match CSS
 let totalSeconds = remaining;
+let isExpanded = false;
 
 
 let allTasks = [];
@@ -35,14 +37,53 @@ async function loadTasks() {
 
 function renderTasks(tasks) {
   taskListEl.innerHTML = '';
+  if (!isExpanded) {
+    expandedTaskEl.hidden = true;
+    taskListEl.classList.remove('hidden');
+  }
+
+
   tasks.forEach(task => {
     const div = document.createElement('div');
     div.className = 'focus-task';
     div.textContent = task.title;
-    div.onclick = () => selectTask(task, div);
+
+    div.onclick = () => {
+      if (!isExpanded) {
+        expandTask(task);
+      }
+    };
+
+
     taskListEl.appendChild(div);
   });
 }
+function expandTask(task) {
+  selectedTask = task;
+  isExpanded = true;
+
+  taskListEl.classList.add('hidden');
+  expandedTaskEl.hidden = false;
+
+  expandedTaskEl.innerHTML = `
+    <h4>${task.title}</h4>
+
+    <div class="focus-task-meta">
+      <span>Created: ${task.createdAt ? new Date(task.createdAt).toLocaleDateString() : 'N/A'}</span>
+      <span>Due: ${task.dueDate || 'N/A'}</span>
+    </div>
+
+    <div class="focus-task-desc">
+      ${task.description || 'No description provided.'}
+    </div>
+  `;
+}
+
+
+expandedTaskEl.addEventListener('dblclick', () => {
+  resetFocusView();
+});
+
 
 function selectTask(task, el) {
   selectedTask = task;
@@ -91,6 +132,24 @@ function updateRing() {
   const offset = RING_CIRCUMFERENCE * (1 - progress);
 
   ring.style.strokeDashoffset = offset;
+}
+function resetFocusView() {
+  // Stop timer
+  clearInterval(timer);
+  timer = null;
+
+  // Reset timer values
+  totalSeconds = Number(durationSelect.value) * 60;
+  remaining = totalSeconds;
+
+  updateDisplay();
+  updateRing();
+
+  // Restore task list
+  expandedTaskEl.hidden = true;
+  taskListEl.classList.remove('hidden');
+
+  renderTasks(allTasks);
 }
 
 
