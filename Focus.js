@@ -13,12 +13,12 @@ let remaining = 25 * 60;
 const ring = document.querySelector('.focus-ring-progress');
 const RING_CIRCUMFERENCE = 603; // must match CSS
 let totalSeconds = remaining;
-let isExpanded = false;
+
 
 
 let allTasks = [];
 let selectedTask = null;
-
+let isExpanded = false;
 /* =========================
    LOAD TASKS (NOT COMPLETED)
 ========================= */
@@ -37,39 +37,46 @@ async function loadTasks() {
 
 function renderTasks(tasks) {
   taskListEl.innerHTML = '';
-  if (!isExpanded) {
-    expandedTaskEl.hidden = true;
-    taskListEl.classList.remove('hidden');
-  }
 
+  // Always reset expanded UI when rendering list
+  isExpanded = false;
+  expandedTaskEl.hidden = true;
+  taskListEl.classList.remove('hidden');
 
   tasks.forEach(task => {
     const div = document.createElement('div');
     div.className = 'focus-task';
     div.textContent = task.title;
 
-    div.onclick = () => {
+    div.addEventListener('click', () => {
       if (!isExpanded) {
         expandTask(task);
       }
-    };
-
+    });
 
     taskListEl.appendChild(div);
   });
 }
-function expandTask(task) {
-  selectedTask = task;
-  isExpanded = true;
 
+function expandTask(task) {
+  isExpanded = true;
+  selectedTask = task;
+
+  // Hide task list
   taskListEl.classList.add('hidden');
+
+  // Show expanded task
   expandedTaskEl.hidden = false;
 
   expandedTaskEl.innerHTML = `
     <h4>${task.title}</h4>
 
     <div class="focus-task-meta">
-      <span>Created: ${task.createdAt ? new Date(task.createdAt).toLocaleDateString() : 'N/A'}</span>
+      <span>Created: ${
+        task.createdAt
+          ? new Date(task.createdAt).toLocaleDateString()
+          : 'N/A'
+      }</span>
       <span>Due: ${task.dueDate || 'N/A'}</span>
     </div>
 
@@ -80,26 +87,29 @@ function expandTask(task) {
 }
 
 
+
 expandedTaskEl.addEventListener('dblclick', () => {
   resetFocusView();
 });
 
 
-function selectTask(task, el) {
-  selectedTask = task;
-  document.querySelectorAll('.focus-task')
-    .forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-}
 
 /* =========================
    SEARCH
 ========================= */
 searchInput.addEventListener('input', () => {
-  const q = searchInput.value.toLowerCase();
-  renderTasks(
-    allTasks.filter(t => t.title.toLowerCase().includes(q))
+  const q = searchInput.value.trim().toLowerCase();
+
+  if (!q) {
+    renderTasks(allTasks);
+    return;
+  }
+
+  const filtered = allTasks.filter(t =>
+    t.title.toLowerCase().includes(q)
   );
+
+  renderTasks(filtered);
 });
 
 /* =========================
@@ -138,17 +148,18 @@ function resetFocusView() {
   clearInterval(timer);
   timer = null;
 
-  // Reset timer values
+  // Reset timer
   totalSeconds = Number(durationSelect.value) * 60;
   remaining = totalSeconds;
 
   updateDisplay();
   updateRing();
 
-  // Restore task list
-  expandedTaskEl.hidden = true;
-  taskListEl.classList.remove('hidden');
+  // Reset expanded state
+  isExpanded = false;
+  selectedTask = null;
 
+  // Restore full task list
   renderTasks(allTasks);
 }
 
@@ -161,7 +172,7 @@ document.getElementById('startTimer').onclick = () => {
   if (timer) return;
 
   timer = setInterval(() => {
-  remaining--;
+  remaining = Math.max(remaining - 1, 0);
   updateDisplay();
   updateRing();
 
