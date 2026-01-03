@@ -3,6 +3,7 @@ const API_BASE =
   window.location.hostname === "localhost"
     ? "http://localhost:3000"
     : "https://taskmanager-05hb.onrender.com";
+  
 
 
 /* =========================
@@ -56,6 +57,10 @@ if (loginForm) {
       const fullName = last ? `${first} ${last}` : first;
 
       localStorage.setItem('fullName', fullName);
+      // Save login timestamp (frontend)
+      localStorage.setItem('loginTime', Date.now().toString());
+      localStorage.setItem('lastActivityTime', Date.now().toString());
+
 
       window.location.href = 'index.html';
 

@@ -6,6 +6,52 @@ const API_BASE =
 
 const userId = localStorage.getItem('userId');
 
+const IDLE_LIMIT = 2 * 60 * 60 * 1000; // 2 hours
+
+
+// =========================
+// ACTIVITY TRACKING (AUTO LOGOUT)
+// =========================
+
+function updateLastActivity() {
+  localStorage.setItem('lastActivityTime', Date.now().toString());
+}
+
+['click', 'mousemove', 'keydown', 'scroll'].forEach(event => {
+  document.addEventListener(event, updateLastActivity, true);
+});
+
+async function autoLogout(message = 'Session expired') {
+  const userId = localStorage.getItem('userId');
+
+  try {
+    if (userId) {
+      await fetch(`${API_BASE}/logout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+      });
+    }
+  } catch (err) {
+    console.warn('Auto logout API failed');
+  }
+
+  localStorage.clear();
+  alert(message);
+  window.location.href = 'login.html';
+}
+
+setInterval(() => {
+  const userId = localStorage.getItem('userId');
+  const lastActivity = Number(localStorage.getItem('lastActivityTime'));
+  if (!userId || !lastActivity) return;
+
+  if (Date.now() - lastActivity > IDLE_LIMIT) {
+    autoLogout('You were logged out due to inactivity');
+  }
+}, 60 * 1000);
+
+
 const taskListEl = document.getElementById('taskList');
 const taskDetailsEl = document.getElementById('taskDetails');
 const searchInput = document.getElementById('taskSearch');
@@ -95,3 +141,21 @@ backBtn.onclick = () => {
 };
 
 loadTasks();
+
+// =========================
+// LOGOUT ON TAB / BROWSER CLOSE
+// =========================
+
+window.addEventListener('beforeunload', () => {
+  const userId = localStorage.getItem('userId');
+  if (!userId) return;
+
+  // Send logout signal to backend (reliable on unload)
+  navigator.sendBeacon(
+    `${API_BASE}/logout`,
+    JSON.stringify({ userId })
+  );
+
+  // Clear local session
+  localStorage.clear();
+});
