@@ -5,7 +5,7 @@ const API_BASE =
 
 
 const userId = localStorage.getItem('userId');
-
+let isInternalNavigation = false;
 const IDLE_LIMIT = 2 * 60 * 60 * 1000; // 2 hours
 
 
@@ -137,6 +137,7 @@ calendarInput.onchange = () => {
    BACK
 ========================= */
 backBtn.onclick = () => {
+  isInternalNavigation = true;
   window.location.href = 'index.html';
 };
 
@@ -147,15 +148,16 @@ loadTasks();
 // =========================
 
 window.addEventListener('beforeunload', () => {
+  // ✅ DO NOT logout on internal navigation
+  if (isInternalNavigation) return;
+
   const userId = localStorage.getItem('userId');
   if (!userId) return;
 
-  // Send logout signal to backend (reliable on unload)
   navigator.sendBeacon(
     `${API_BASE}/logout`,
     JSON.stringify({ userId })
   );
 
-  // Clear local session
   localStorage.clear();
 });

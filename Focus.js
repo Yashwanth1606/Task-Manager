@@ -5,6 +5,7 @@ const API_BASE =
   
   
   const userId = localStorage.getItem('userId');
+  let isInternalNavigation = false;
   const IDLE_LIMIT = 2 * 60 * 60 * 1000; // 2 hours
 
 
@@ -236,24 +237,44 @@ document.getElementById('pauseTimer').onclick = () => {
   timer = null;
 };
 
+// =========================
+// BACK TO DASHBOARD (FOCUS PAGE)
+// =========================
+
+const backBtn = document.getElementById('backBtn');
+
+if (backBtn) {
+  backBtn.addEventListener('click', () => {
+    // ✅ Mark internal navigation
+    isInternalNavigation = true;
+
+    // Navigate safely
+    window.location.href = 'index.html';
+  });
+}
+
+
 loadTasks();
 updateDisplay();
 updateRing();
+
+
 
 // =========================
 // LOGOUT ON TAB / BROWSER CLOSE
 // =========================
 
 window.addEventListener('beforeunload', () => {
+  // ✅ DO NOT logout on internal navigation
+  if (isInternalNavigation) return;
+
   const userId = localStorage.getItem('userId');
   if (!userId) return;
 
-  // Send logout signal to backend (reliable on unload)
   navigator.sendBeacon(
     `${API_BASE}/logout`,
     JSON.stringify({ userId })
   );
 
-  // Clear local session
   localStorage.clear();
 });

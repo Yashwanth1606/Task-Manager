@@ -6,6 +6,7 @@ const API_BASE =
     : "https://taskmanager-05hb.onrender.com";
 
 
+let isInternalNavigation = false;
 const IDLE_LIMIT = 2 * 60 * 60 * 1000; // 2 hours in ms
 // Auto-logout on inactivity
 
@@ -906,6 +907,7 @@ async function updateTaskStatusOnServer(id, newStatus) {
 const focusBtn = document.getElementById('focusTimeBtn');
 if (focusBtn) {
   focusBtn.addEventListener('click', () => {
+    isInternalNavigation = true;
     window.location.href = 'Focus.html';
   });
 }
@@ -914,6 +916,7 @@ if (focusBtn) {
 const myTaskBtn = document.getElementById('myTaskBtn');
 if (myTaskBtn) {
   myTaskBtn.addEventListener('click', () => {
+    isInternalNavigation = true;
     window.location.href = 'my-tasks.html';
   });
 }
@@ -923,15 +926,17 @@ if (myTaskBtn) {
 // =========================
 
 window.addEventListener('beforeunload', () => {
+  // ✅ DO NOT logout on internal navigation
+  if (isInternalNavigation) return;
+
   const userId = localStorage.getItem('userId');
   if (!userId) return;
 
-  // Send logout signal to backend (reliable on unload)
   navigator.sendBeacon(
     `${API_BASE}/logout`,
     JSON.stringify({ userId })
   );
 
-  // Clear local session
   localStorage.clear();
 });
+
