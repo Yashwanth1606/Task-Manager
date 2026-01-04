@@ -969,3 +969,35 @@ select.at-input option:checked {
 .focus-page .search-area {
   margin-bottom: 12px;
 }
+/* ============================
+   Add Task textarea scrollbar
+   (matches Tasks / Progress / Deadline)
+   ============================ */
+
+#at_description::-webkit-scrollbar,
+.at-textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+#at_description::-webkit-scrollbar-track,
+.at-textarea::-webkit-scrollbar-track {
+  background: transparent; /* same as other containers */
+}
+
+#at_description::-webkit-scrollbar-thumb,
+.at-textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+#at_description::-webkit-scrollbar-thumb:hover,
+.at-textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Firefox support */
+#at_description,
+.at-textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.15) transparent;
+}
