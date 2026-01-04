@@ -353,3 +353,27 @@
   line-height: 1.5;
   color: rgba(230,238,246,0.9);
 }
+/* =========================
+   Focus Page – Text Selection Rules
+   ========================= */
+
+/* Disable text selection for everything inside focus page */
+.focus-page * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* ✅ Allow selection ONLY for task description */
+.focus-task-desc {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  cursor: text;
+}
+.focus-task-desc::selection {
+  background: rgba(124, 58, 237, 0.35);
+  color: #ffffff;
+}
