@@ -10,8 +10,13 @@
   <link rel="stylesheet" href="Focus.css">
 </head>
 <body>
-
-  <div class="focus-page">
+  <script>
+    // AUTH GUARD
+    if (!localStorage.getItem('userId')) {
+      window.location.href = 'login.html';
+    }
+  </script>
+    <div class="focus-page">
 
     <header class="focus-header">
       <h2>Focus Time</h2>

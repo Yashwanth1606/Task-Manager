@@ -70,7 +70,10 @@ let isExpanded = false;
    LOAD TASKS (NOT COMPLETED)
 ========================= */
 async function loadTasks() {
-  if (!userId) return;
+    if (!userId) {
+    console.warn('Focus page: userId missing');
+    return;
+  }
 
   const res = await fetch(`${API_BASE}/tasks?userId=${userId}`);
   const data = await res.json();
@@ -119,18 +122,44 @@ function expandTask(task) {
     <h4>${task.title}</h4>
 
     <div class="focus-task-meta">
-      <span>Created: ${
-        task.createdAt
-          ? new Date(task.createdAt).toLocaleDateString()
-          : 'N/A'
-      }</span>
+      <span>Status: <strong>${task.status || 'Not Started'}</strong></span>
+      <span>Created: ${task.date
+        ? new Date(task.date).toLocaleDateString()
+        : 'N/A'}
+      </span>
       <span>Due: ${task.dueDate || 'N/A'}</span>
     </div>
 
     <div class="focus-task-desc">
       ${task.description || 'No description provided.'}
     </div>
+
+    <div class="focus-task-action">
+      ${renderStatusButton(task)}
+    </div>
   `;
+}
+function renderStatusButton(task) {
+  const status = task.status || 'Not Started';
+
+  if (status === 'Completed') {
+    return `<button class="focus-status-btn done" disabled>
+              ✅ Completed
+            </button>`;
+  }
+
+  if (status === 'In Progress') {
+    return `<button class="focus-status-btn complete"
+              onclick="updateTaskStatus('${task.id}', 'Completed')">
+              ✔ Mark as Completed
+            </button>`;
+  }
+
+  // Default → Not Started
+  return `<button class="focus-status-btn start"
+            onclick="updateTaskStatus('${task.id}', 'In Progress')">
+            ▶ Start Task
+          </button>`;
 }
 
 
@@ -278,3 +307,31 @@ window.addEventListener('beforeunload', () => {
 
   localStorage.clear();
 });
+async function updateTaskStatus(taskId, newStatus) {
+  try {
+    await fetch(`${API_BASE}/tasks/${taskId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus })
+    });
+
+    // Update local task
+    const task = allTasks.find(t => String(t.id) === String(taskId));
+    if (task) task.status = newStatus;
+
+    // If completed → reset view
+    if (newStatus === 'Completed') {
+      resetFocusView();
+      loadTasks();
+      return;
+    }
+
+    // Otherwise re-render expanded view
+    expandTask(task);
+    loadTasks();
+
+  } catch (err) {
+    console.error('Failed to update task status', err);
+    alert('Failed to update task status');
+  }
+}
