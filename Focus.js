@@ -9,9 +9,7 @@ const API_BASE =
   const IDLE_LIMIT = 2 * 60 * 60 * 1000; // 2 hours
 
 
-// =========================
 // ACTIVITY TRACKING (AUTO LOGOUT)
-// =========================
 
 function updateLastActivity() {
   localStorage.setItem('lastActivityTime', Date.now().toString());

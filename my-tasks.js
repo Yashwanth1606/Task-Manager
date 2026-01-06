@@ -143,9 +143,7 @@ backBtn.onclick = () => {
 
 loadTasks();
 
-// =========================
 // LOGOUT ON TAB / BROWSER CLOSE
-// =========================
 
 window.addEventListener('beforeunload', () => {
   // ✅ DO NOT logout on internal navigation
