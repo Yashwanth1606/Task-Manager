@@ -520,7 +520,6 @@ button, .nav-item, .member { touch-action: manipulation; -webkit-tap-highlight-c
     font-size: 18px;
  }
 
- /* ===== Dark theme for Priority dropdown ===== */
 
 /* Select field (closed state) */
 .at-input select,
@@ -587,8 +586,6 @@ select.at-input option:checked {
     background: rgba(255, 255, 255, 0.15);
 }
 
-/* ====== Fix: Prevent task-title overflow and keep text inside the card ====== */
-
 /* Ensure cards clip any overflow and respect padding */
 .card-style {
   box-sizing: border-box;       /* should already be set globally, but ensure here */
@@ -615,12 +612,10 @@ select.at-input option:checked {
   white-space: normal;          /* IMPORTANT: allow wrapping */
   max-height: calc(1.16em * 2);
 
-  /* clamp visually to 3 lines using max-height (no -webkit-line-clamp required) */
-  /*max-height: calc(1.18em * 3);  line-height * 3 lines */
 }
 /* Priority marker (small dot before task title) */
 .card-style .task-title {
-  position: relative; /* ensure ::before uses card title as anchor */
+  position: relative; 
   padding-left: 18px; /* room for the marker */
 }
 
@@ -672,10 +667,9 @@ select.at-input option:checked {
 .tasks-list > .card-style,
 .inprogress-list > .card-style,
 .deadline-list > .card-style {
-  min-width: 0;     /* allow shrinking properly inside flex column */
+  min-width: 0;     
 }
 
-/* Optional: slightly reduce large titles visually on very narrow columns */
 @media (max-width:480px){
   .card-style .task-title {
     font-size: 12px;
@@ -794,7 +788,6 @@ select.at-input option:checked {
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* 🖱️ Click (press) */
 #addTaskSmall:active,
 #createTaskBtn:active {
   transform: translateY(0) scale(0.94);
@@ -804,7 +797,7 @@ select.at-input option:checked {
     inset 0 2px 6px rgba(0, 0, 0, 0.45);
 }
 
-/* ✨ Subtle idle glow (same feel as Logout) */
+/* Subtle idle glow (same feel as Logout) */
 @keyframes addTaskPulse {
   0% {
     box-shadow: 0 0 0 rgba(124, 58, 237, 0);
@@ -832,7 +825,6 @@ select.at-input option:checked {
    Completed Task Animations
    ========================= */
 
-/* Base completed task card */
 .completed-item {
   position: relative;
   background: linear-gradient(
@@ -851,7 +843,6 @@ select.at-input option:checked {
     border-color 0.25s ease;
 }
 
-/* 🖱️ Hover animation */
 .completed-item:hover {
   transform: translateY(-4px) scale(1.01);
   border-color: rgba(13, 187, 123, 0.6);
@@ -971,7 +962,6 @@ select.at-input option:checked {
 }
 /* ============================
    Add Task textarea scrollbar
-   (matches Tasks / Progress / Deadline)
    ============================ */
 
 #at_description::-webkit-scrollbar,
