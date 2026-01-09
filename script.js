@@ -940,3 +940,33 @@ window.addEventListener('beforeunload', () => {
   localStorage.clear();
 });
 
+const avatarBtn = document.getElementById('avatarBtn');
+const avatarMenu = document.getElementById('avatarMenu');
+
+if (avatarBtn && avatarMenu) {
+  avatarBtn.addEventListener('click', () => {
+    avatarMenu.style.display =
+      avatarMenu.style.display === 'flex' ? 'none' : 'flex';
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.avatar-wrapper')) {
+      avatarMenu.style.display = 'none';
+    }
+  });
+}
+const profileBtn = document.getElementById('profileBtn');
+
+if (profileBtn) {
+  profileBtn.addEventListener('click', () => {
+    window.location.href = 'profile.html';
+  });
+}
+const changePasswordBtn = document.getElementById('changePasswordBtn');
+
+if (changePasswordBtn) {
+  changePasswordBtn.addEventListener('click', () => {
+    window.location.href = 'change-password.html';
+  });
+}
