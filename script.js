@@ -944,18 +944,17 @@ const avatarBtn = document.getElementById('avatarBtn');
 const avatarMenu = document.getElementById('avatarMenu');
 
 if (avatarBtn && avatarMenu) {
-  avatarBtn.addEventListener('click', () => {
+  avatarBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     avatarMenu.style.display =
       avatarMenu.style.display === 'flex' ? 'none' : 'flex';
   });
 
-  // Close when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.avatar-wrapper')) {
-      avatarMenu.style.display = 'none';
-    }
+  document.addEventListener('click', () => {
+    avatarMenu.style.display = 'none';
   });
 }
+
 const profileBtn = document.getElementById('profileBtn');
 
 if (profileBtn) {
@@ -970,5 +969,32 @@ if (changePasswordBtn) {
   changePasswordBtn.addEventListener('click', () => {
     isInternalNavigation = true;
     window.location.href = 'change-password.html';
+  });
+}
+// =========================
+// AVATAR MENU LOGOUT
+// =========================
+const logoutAvatarBtn = document.getElementById('logoutAvatarBtn');
+
+if (logoutAvatarBtn) {
+  logoutAvatarBtn.addEventListener('click', async () => {
+    // ❗ this is an INTENTIONAL logout, not navigation
+    const userId = localStorage.getItem('userId');
+
+    try {
+      if (userId) {
+        await fetch(`${API_BASE}/logout`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId })
+        });
+      }
+    } catch (err) {
+      console.warn('Avatar logout API failed');
+    }
+
+    // Clear everything and redirect
+    localStorage.clear();
+    window.location.href = 'login.html';
   });
 }
