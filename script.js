@@ -960,6 +960,7 @@ const profileBtn = document.getElementById('profileBtn');
 
 if (profileBtn) {
   profileBtn.addEventListener('click', () => {
+    isInternalNavigation = true;   // ✅ THIS WAS MISSING
     window.location.href = 'profile.html';
   });
 }
@@ -967,6 +968,7 @@ const changePasswordBtn = document.getElementById('changePasswordBtn');
 
 if (changePasswordBtn) {
   changePasswordBtn.addEventListener('click', () => {
+    isInternalNavigation = true;
     window.location.href = 'change-password.html';
   });
 }
