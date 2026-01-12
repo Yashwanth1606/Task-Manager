@@ -168,3 +168,27 @@ body {
     grid-template-columns: 1fr;
   }
 }
+/* BACK BUTTON */
+.back-button {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(168,85,247,0.35);
+  color: #e9d5ff;
+
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: rgba(168,85,247,0.15);
+  border-color: #a855f7;
+  transform: translateX(-3px);
+}
