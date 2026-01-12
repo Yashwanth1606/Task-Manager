@@ -104,3 +104,10 @@ window.addEventListener('beforeunload', () => {
     return;
   }
 });
+saveBtn.textContent = 'Saved ✓';
+saveBtn.style.background = '#10b981';
+
+setTimeout(() => {
+  saveBtn.textContent = 'Save Changes';
+  saveBtn.style.background = '';
+}, 1600);
