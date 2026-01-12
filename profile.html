@@ -1,56 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Profile</title>
-  <link rel="stylesheet" href="script.css">
+  <meta charset="UTF-8" />
+  <title>Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Icons -->
+  <link href="https://unpkg.com/lucide-static/font/lucide.css" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="profile.css">
 </head>
 <body>
 
-<div class="profile-page">
+<div class="page">
+  <div class="card">
 
-  <!-- Back -->
-  <button id="backToDashboard" class="profile-back">
-    ← Back
-  </button>
-
-  <!-- Card -->
-  <div class="profile-card">
-    <h2>Edit Profile</h2>
-    <p class="subtitle">Keep your details up to date</p>
-
-    <div class="form-grid">
-
-      <div class="field">
-        <input id="profileFirstName" required />
-        <label>First Name</label>
+    <!-- Header -->
+    <div class="card-header">
+      <div class="avatar">
+        <i class="lucide-user"></i>
       </div>
-
-      <div class="field">
-        <input id="profileLastName" />
-        <label>Last Name</label>
+      <div>
+        <h1>Your Profile</h1>
+        <p>Update your personal information</p>
       </div>
-
-      <div class="field full">
-        <input id="profileEmail" required />
-        <label>Email</label>
-      </div>
-
-      <div class="field full">
-        <input id="profilePhone" />
-        <label>Phone</label>
-      </div>
-
     </div>
 
-    <button id="saveProfileBtn" class="save-btn">
-      Save Changes
-    </button>
-  </div>
+    <!-- Form -->
+    <form class="form">
 
+      <div class="grid">
+
+        <div class="field">
+          <label>First Name</label>
+          <div class="input-wrap">
+            <i class="lucide-user"></i>
+            <input type="text" placeholder="John">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Last Name</label>
+          <div class="input-wrap">
+            <i class="lucide-user"></i>
+            <input type="text" placeholder="Doe">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Email Address</label>
+          <div class="input-wrap">
+            <i class="lucide-mail"></i>
+            <input type="email" placeholder="john.doe@example.com">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Date of Birth</label>
+          <div class="input-wrap">
+            <i class="lucide-calendar"></i>
+            <input type="date">
+          </div>
+        </div>
+
+        <div class="field full">
+          <label>Contact Number</label>
+          <div class="input-wrap">
+            <i class="lucide-phone"></i>
+            <input type="tel" placeholder="+1 (555) 123-4567">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button type="submit" class="btn-primary">
+          Save Profile
+        </button>
+        <button type="button" class="btn-secondary">
+          Clear
+        </button>
+      </div>
+
+    </form>
+  </div>
 </div>
 
-
-<script src="profile.js"></script>
 </body>
 </html>
