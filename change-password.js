@@ -44,7 +44,7 @@ toggleButtons.forEach(button => {
     });
 });
 
-// Check password strength
+
 function checkPasswordStrength(password) {
     let score = 0;
     
@@ -57,7 +57,6 @@ function checkPasswordStrength(password) {
     return score;
 }
 
-// Update password requirements UI
 function updateRequirements(password) {
     const reqElements = {
         length: document.getElementById('req-length'),
@@ -106,7 +105,7 @@ function isPasswordValid(password) {
     return Object.values(requirements).every(fn => fn(password));
 }
 
-// Check if passwords match
+
 function checkPasswordsMatch() {
     const newPassword = newPasswordInput.value;
     const confirmPassword = confirmPasswordInput.value;
