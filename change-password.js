@@ -127,13 +127,13 @@ function checkPasswordsMatch() {
     }
 }
 
-// Event listeners for new password input
-newPasswordInput.addEventListener('input', function() {
-    const password = this.value;
-    updateStrengthIndicator(password);
-    updateRequirements(password);
-    checkPasswordsMatch();
-});
+// // Event listeners for new password input
+// newPasswordInput.addEventListener('input', function() {
+//     const password = this.value;
+//     updateStrengthIndicator(password);
+//     updateRequirements(password);
+//     checkPasswordsMatch();
+// });
 
 // Event listener for confirm password input
 confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
