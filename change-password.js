@@ -20,10 +20,10 @@ const successMessage = document.getElementById('successMessage');
 // Toggle password visibility
 const toggleButtons = document.querySelectorAll('.toggle-password');
 toggleButtons.forEach(button => {
-    button.addEventListener('click', function() {
+    button.addEventListener('click', function () {
         const targetId = this.getAttribute('data-target');
         const input = document.getElementById(targetId);
-        
+
         if (input.type === 'password') {
             input.type = 'text';
             this.innerHTML = `
@@ -47,13 +47,13 @@ toggleButtons.forEach(button => {
 
 function checkPasswordStrength(password) {
     let score = 0;
-    
+
     if (requirements.length(password)) score++;
     if (requirements.uppercase(password)) score++;
     if (requirements.lowercase(password)) score++;
     if (requirements.number(password)) score++;
     if (requirements.special(password)) score++;
-    
+
     return score;
 }
 
@@ -65,7 +65,7 @@ function updateRequirements(password) {
         number: document.getElementById('req-number'),
         special: document.getElementById('req-special')
     };
-    
+
     Object.keys(requirements).forEach(key => {
         const isValid = requirements[key](password);
         if (isValid) {
@@ -79,9 +79,9 @@ function updateRequirements(password) {
 // Update strength indicator
 function updateStrengthIndicator(password) {
     const score = checkPasswordStrength(password);
-    
+
     strengthFill.className = 'strength-fill';
-    
+
     if (password.length === 0) {
         strengthText.textContent = 'Password strength';
         strengthFill.style.width = '0%';
@@ -109,13 +109,13 @@ function isPasswordValid(password) {
 function checkPasswordsMatch() {
     const newPassword = newPasswordInput.value;
     const confirmPassword = confirmPasswordInput.value;
-    
+
     if (confirmPassword.length === 0) {
         confirmError.textContent = '';
         confirmPasswordInput.classList.remove('error');
         return true;
     }
-    
+
     if (newPassword !== confirmPassword) {
         confirmError.textContent = 'Passwords do not match';
         confirmPasswordInput.classList.add('error');
@@ -127,57 +127,57 @@ function checkPasswordsMatch() {
     }
 }
 
-// // Event listeners for new password input
-// newPasswordInput.addEventListener('input', function() {
-//     const password = this.value;
-//     updateStrengthIndicator(password);
-//     updateRequirements(password);
-//     checkPasswordsMatch();
-// });
+// Event listeners for new password input
+newPasswordInput.addEventListener('input', function () {
+    const password = this.value;
+    updateStrengthIndicator(password);
+    updateRequirements(password);
+    checkPasswordsMatch();
+});
 
 // Event listener for confirm password input
 confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
 
 // Form submission
-passwordForm.addEventListener('submit', function(e) {
+passwordForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    
+
     const currentPassword = currentPasswordInput.value;
     const newPassword = newPasswordInput.value;
     const confirmPassword = confirmPasswordInput.value;
-    
+
     // Validate current password is not empty
     if (!currentPassword) {
         alert('Please enter your current password');
         return;
     }
-    
+
     // Validate new password meets requirements
     if (!isPasswordValid(newPassword)) {
         alert('New password does not meet all requirements');
         return;
     }
-    
+
     // Validate passwords match
     if (newPassword !== confirmPassword) {
         alert('Passwords do not match');
         return;
     }
-    
+
     // Validate new password is different from current
     if (currentPassword === newPassword) {
         alert('New password must be different from current password');
         return;
     }
-    
+
     // Simulate password change (replace with actual API call)
     setTimeout(() => {
         // Hide form
         passwordForm.style.display = 'none';
-        
+
         // Show success message
         successMessage.classList.add('show');
-        
+
         // Reset form after 3 seconds
         setTimeout(() => {
             passwordForm.reset();
