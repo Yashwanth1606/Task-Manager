@@ -2,11 +2,11 @@ const API_BASE =
   window.location.hostname === "localhost"
     ? "http://localhost:3000"
     : "https://taskmanager-05hb.onrender.com";
-  
-  
-  const userId = localStorage.getItem('userId');
-  let isInternalNavigation = false;
-  const IDLE_LIMIT = 2 * 60 * 60 * 1000; // 2 hours
+
+
+const userId = localStorage.getItem('userId');
+let isInternalNavigation = false;
+const IDLE_LIMIT = 2 * 60 * 60 * 1000; // 2 hours
 
 
 // ACTIVITY TRACKING (AUTO LOGOUT)
@@ -68,7 +68,7 @@ let isExpanded = false;
    LOAD TASKS (NOT COMPLETED)
 ========================= */
 async function loadTasks() {
-    if (!userId) {
+  if (!userId) {
     console.warn('Focus page: userId missing');
     return;
   }
@@ -122,8 +122,8 @@ function expandTask(task) {
     <div class="focus-task-meta">
       <span>Status: <strong>${task.status || 'Not Started'}</strong></span>
       <span>Created: ${task.date
-        ? new Date(task.date).toLocaleDateString()
-        : 'N/A'}
+      ? new Date(task.date).toLocaleDateString()
+      : 'N/A'}
       </span>
       <span>Due: ${task.dueDate || 'N/A'}</span>
     </div>
@@ -206,7 +206,27 @@ durationSelect.addEventListener('change', () => {
 function updateDisplay() {
   const m = Math.floor(remaining / 60);
   const s = remaining % 60;
-  display.textContent = `${m}:${String(s).padStart(2,'0')}`;
+
+  // Split into digits
+  const mStr = String(m).padStart(2, '0');
+  const sStr = String(s).padStart(2, '0');
+
+  updateFlipUnit('minTen', mStr[0]);
+  updateFlipUnit('minOne', mStr[1]);
+  updateFlipUnit('secTen', sStr[0]);
+  updateFlipUnit('secOne', sStr[1]);
+}
+
+function updateFlipUnit(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const top = el.querySelector('.flip-top');
+  const bottom = el.querySelector('.flip-bottom');
+
+  // Simple update (no animation for now)
+  if (top) top.textContent = val;
+  if (bottom) bottom.textContent = val;
 }
 
 function updateRing() {
@@ -246,16 +266,16 @@ document.getElementById('startTimer').onclick = () => {
   if (timer) return;
 
   timer = setInterval(() => {
-  remaining = Math.max(remaining - 1, 0);
-  updateDisplay();
-  updateRing();
+    remaining = Math.max(remaining - 1, 0);
+    updateDisplay();
+    updateRing();
 
-  if (remaining <= 0) {
-    clearInterval(timer);
-    timer = null;
-    alert('Focus session completed 🎉');
-  }
-}, 1000);
+    if (remaining <= 0) {
+      clearInterval(timer);
+      timer = null;
+      alert('Focus session completed 🎉');
+    }
+  }, 1000);
 
 };
 
