@@ -350,6 +350,20 @@ if (searchClearBtn) {
 }
 
 
+// Sidebar toggle logic
+const sidebarToggleBtn = document.getElementById('sidebarToggle');
+const appContainer = document.querySelector('.app');
+
+if (sidebarToggleBtn && appContainer) {
+  sidebarToggleBtn.addEventListener('click', () => {
+    appContainer.classList.toggle('sidebar-collapsed');
+
+    // Optional: save preference
+    // localStorage.setItem('sidebarCollapsed', appContainer.classList.contains('sidebar-collapsed'));
+  });
+}
+
+
 // utility: title case
 function toTitleCase(str) {
   return String(str || '')
