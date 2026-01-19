@@ -162,6 +162,28 @@ const sampleTasks = [
     started: '2025-01-12T10:00',
     deadline: '2025-01-15',
     completedAt: getTodayDateString() + 'T14:00'
+  },
+  {
+    id: 6,
+    title: 'Client meeting',
+    description: 'Weekly sync with the client team',
+    priority: 'High',
+    status: 'Completed',
+    created: '2025-01-14',
+    started: '2025-01-16T15:00',
+    deadline: '2025-01-16',
+    completedAt: '2025-01-16T16:00'
+  },
+  {
+    id: 7,
+    title: 'Database backup',
+    description: 'Routine maintenance',
+    priority: 'Low',
+    status: 'Completed',
+    created: '2025-01-12',
+    started: '2025-01-12T02:00',
+    deadline: '2025-01-12',
+    completedAt: '2025-01-12T02:30'
   }
 ];
 
@@ -222,29 +244,29 @@ function updateHeaderDate() {
 }
 
 // set avatar initials and welcome first name based on the profile name in the sidebar
-function syncProfileDisplay(){
+function syncProfileDisplay() {
   const nameEl = document.querySelector('.profile .name');
   const avatarEl = document.querySelector('.profile .avatar');
   const welcomeNameEl = document.querySelector('.welcome-name');
-  if(!nameEl) return;
+  if (!nameEl) return;
 
   const full = String(nameEl.textContent || '').trim();
-  if(!full) return;
+  if (!full) return;
   const parts = full.split(/\s+/);
   const firstName = parts[0] || full;
 
   // initials: first char of first and last (if present)
   let initials = '';
-  if(parts.length === 1){
+  if (parts.length === 1) {
     initials = (parts[0][0] || '').toUpperCase();
   } else {
-    initials = ((parts[0][0] || '') + (parts[parts.length-1][0] || '')).toUpperCase();
+    initials = ((parts[0][0] || '') + (parts[parts.length - 1][0] || '')).toUpperCase();
   }
 
-  if(avatarEl) avatarEl.textContent = initials;
+  if (avatarEl) avatarEl.textContent = initials;
 
   const emailEl = document.querySelector('.profile .email');
-  if(emailEl && avatarEl){
+  if (emailEl && avatarEl) {
     const emailText = String(emailEl.textContent || '').trim();
     emailEl.style.display = 'none';
     avatarEl.dataset.email = emailText;
@@ -344,11 +366,11 @@ function createTaskCard(task, showDescription = true) {
   t.dataset.taskId = String(task.id);
 
   /* ✅ ADD PRIORITY DOT CODE HERE */
-    const p = (task.priority || '').toString().toLowerCase();
-    if (p === '1' || p === 'h' || p === 'high') t.dataset.priority = 'high';
-    else if (p === '2' || p === 'm' || p === 'medium') t.dataset.priority = 'medium';
-    else if (p === '3' || p === 'l' || p === 'low') t.dataset.priority = 'low';
-    /* END */
+  const p = (task.priority || '').toString().toLowerCase();
+  if (p === '1' || p === 'h' || p === 'high') t.dataset.priority = 'high';
+  else if (p === '2' || p === 'm' || p === 'medium') t.dataset.priority = 'medium';
+  else if (p === '3' || p === 'l' || p === 'low') t.dataset.priority = 'low';
+  /* END */
 
   // drag visuals
   t.addEventListener('dragstart', function (ev) {
@@ -377,8 +399,8 @@ function createTaskCard(task, showDescription = true) {
   if (task.deadline) {
     const d = new Date(task.deadline);
     if (!isNaN(d.getTime())) {
-      const dd = String(d.getDate()).padStart(2,'0');
-      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
       const yyyy = d.getFullYear();
       dueText = `${dd}-${mm}-${yyyy}`;
     } else {
@@ -422,7 +444,7 @@ function normalizeDateString(value) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-function renderTasks(tasks){
+function renderTasks(tasks) {
   // Clear all sections
   if (tasksListEl) tasksListEl.innerHTML = '';
   if (inprogressListEl) inprogressListEl.innerHTML = '';
@@ -450,8 +472,8 @@ function renderTasks(tasks){
     }
 
     // TASKS column → Not Started
-      if (status === 'Not Started') {
-        notStartedCount++;
+    if (status === 'Not Started') {
+      notStartedCount++;
       if (tasksListEl) tasksListEl.appendChild(createTaskCard(task, false));
     }
 
@@ -469,7 +491,7 @@ function renderTasks(tasks){
     }
   });
 
-    if (completedTasks.length > 0 && completedListEl) {
+  if (completedTasks.length > 0 && completedListEl) {
     // helper to pick a numeric timestamp to sort by
     function getTaskTime(t) {
       const ts = t.completedAt || t.started || t.created || '';
@@ -479,7 +501,9 @@ function renderTasks(tasks){
 
     // sort: newest completed first
     completedTasks.sort((a, b) => getTaskTime(b) - getTaskTime(a));
-    const latest = completedTasks[0];
+
+    // Take up to 3 most recent tasks
+    const recentCompleted = completedTasks.slice(0, 3);
 
     // compute duration between when task started (or created) and when completed
     function getDurationString(startStr, endStr) {
@@ -489,14 +513,14 @@ function renderTasks(tasks){
       if (isNaN(end.getTime())) return 'Unknown';
       if (!start || isNaN(start.getTime())) {
         // fallback: use created if started missing
-        return 'Took: ' + Math.round((end - (start || new Date())) / (1000*60)) + ' minutes';
+        return 'Took: ' + Math.round((end - (start || new Date())) / (1000 * 60)) + ' minutes';
       }
       let diff = Math.max(0, end - start); // millis
-      const days = Math.floor(diff / (1000*60*60*24));
-      diff -= days * (1000*60*60*24);
-      const hours = Math.floor(diff / (1000*60*60));
-      diff -= hours * (1000*60*60);
-      const minutes = Math.floor(diff / (1000*60));
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      diff -= days * (1000 * 60 * 60 * 24);
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      diff -= hours * (1000 * 60 * 60);
+      const minutes = Math.floor(diff / (1000 * 60));
       const parts = [];
       if (days) parts.push(days + (days === 1 ? ' day' : ' days'));
       if (hours) parts.push(hours + (hours === 1 ? ' hour' : ' hours'));
@@ -518,26 +542,25 @@ function renderTasks(tasks){
       return comp > dl ? 'Yes' : 'No';
     }
 
-    const durationStr = getDurationString(latest.started || latest.created, latest.completedAt);
-    const deadlineStatus = missedDeadline(latest);
+    recentCompleted.forEach(task => {
+      const durationStr = getDurationString(task.started || task.created, task.completedAt);
+      const deadlineStatus = missedDeadline(task);
 
-    // Build new completed item markup: Title, duration, deadline flag
-    const citem = document.createElement('div');
-    citem.className = 'completed-item completed-item--detailed animate-in';
+      // Build new completed item markup: Title, duration, deadline flag
+      const citem = document.createElement('div');
+      citem.className = 'completed-item completed-item--detailed animate-in';
 
-
-    citem.innerHTML = `
-      <div class="info">
-        <h5 class="completed-title">${latest.title}</h5>
-        <p class="completed-meta">
-          <span class="completed-duration">${durationStr}</span>
-        <p class="completed-meta">
-          <span class="completed-deadline">Deadline: ${deadlineStatus}</span>
-        </p>
-        </p>
-      </div>
-    `;
-    completedListEl.appendChild(citem);
+      citem.innerHTML = `
+        <div class="info">
+            <h5 class="completed-title">${task.title}</h5>
+            <p class="completed-meta">
+            <span class="completed-duration">${durationStr}</span>
+            <span class="completed-deadline"> | Deadline: ${deadlineStatus}</span>
+            </p>
+        </div>
+        `;
+      completedListEl.appendChild(citem);
+    });
   }
 
 
@@ -796,22 +819,22 @@ async function updateTaskStatusOnServer(id, newStatus) {
   const submitBtn = document.getElementById('at_submit');
   const cancelBtn = document.getElementById('at_cancel');
 
-  function openModal(){
-    if(!backdrop) return;
+  function openModal() {
+    if (!backdrop) return;
     if (inputTitle) inputTitle.value = '';
     if (inputDesc) inputDesc.value = '';
     if (inputPriority) inputPriority.value = 'High';
     if (inputDue) inputDue.value = '';
-    setTimeout(()=> inputTitle && inputTitle.focus(), 10);
+    setTimeout(() => inputTitle && inputTitle.focus(), 10);
     backdrop.style.display = 'flex';
-    backdrop.setAttribute('aria-hidden','false');
+    backdrop.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden'; // prevent background scroll
   }
 
-  function closeModal(){
-    if(!backdrop) return;
+  function closeModal() {
+    if (!backdrop) return;
     backdrop.style.display = 'none';
-    backdrop.setAttribute('aria-hidden','true');
+    backdrop.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = ''; // restore
   }
 
@@ -844,7 +867,7 @@ async function updateTaskStatusOnServer(id, newStatus) {
 
   // SUBMIT FORM → SEND TO BACKEND
   if (form) {
-    form.addEventListener('submit', async function(ev){
+    form.addEventListener('submit', async function (ev) {
       ev.preventDefault();
 
       const title = (inputTitle && inputTitle.value || '').trim();
@@ -853,7 +876,7 @@ async function updateTaskStatusOnServer(id, newStatus) {
       const dueDate = (inputDue && inputDue.value) || '';
       const status = "Not Started";  // Default
 
-      if(!title){
+      if (!title) {
         alert("Enter a task title");
         return;
       }
@@ -890,7 +913,7 @@ async function updateTaskStatusOnServer(id, newStatus) {
         closeModal();
         setTimeout(() => loadTasksFromServer(), 700);
 
-      } catch (err){
+      } catch (err) {
         console.error("Add task failed", err);
         alert("Error adding task");
         if (submitBtn) {

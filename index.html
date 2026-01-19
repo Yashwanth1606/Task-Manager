@@ -1,25 +1,27 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Task Manager — Home</title>
   <link rel="stylesheet" href="script.css" />
 </head>
+
 <body>
   <script>
-  //  AUTH GUARD
-  const userId = localStorage.getItem('userId');
-  if (!userId) {
-    window.location.href = 'login.html';
-  }
-</script>
+    //  AUTH GUARD
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      window.location.href = 'login.html';
+    }
+  </script>
 
   <div class="app">
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="profile">
-        
+
         <div class="profile-info">
           <div class="name">Task Manager</div>
           <div class="email">Yashwanthu702@gmail.com</div>
@@ -30,42 +32,69 @@
         <button class="nav-item active" aria-label="Dashboard">
           <span class="nav-icon" aria-hidden="true">
             <!-- Home icon -->
-            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z" stroke="currentColor"
+                stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
           </span>
           <span class="nav-text">Dashboard</span>
         </button>
         <button class="nav-item" id="focusTimeBtn" aria-label="Focus Time">
           <span class="nav-icon" aria-hidden="true">
             <!-- Lightning icon -->
-            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L3 14h7l-1 8L21 10h-7l-1-8z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 2L3 14h7l-1 8L21 10h-7l-1-8z" stroke="currentColor" stroke-width="1.25"
+                stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
           </span>
           <span class="nav-text">Focus Time</span>
         </button>
         <button class="nav-item" id="myTaskBtn" aria-label="My Task">
           <span class="nav-icon" aria-hidden="true">
             <!-- Clipboard icon -->
-            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 4h2a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h2" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 2h6v4H9z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 4h2a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h2" stroke="currentColor"
+                stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M9 2h6v4H9z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
           </span>
           <span class="nav-text">My Task</span>
         </button>
         <button class="nav-item" aria-label="Task Categories">
           <span class="nav-icon" aria-hidden="true">
             <!-- Folder icon -->
-            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"
+                stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
           </span>
           <span class="nav-text">Daily Tasks</span>
         </button>
         <button class="nav-item" aria-label="Settings">
           <span class="nav-icon" aria-hidden="true">
             <!-- Gear icon -->
-            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 0 1 5.27 16.9l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09c.66 0 1.24-.38 1.51-1A1.65 1.65 0 0 0 4.3 6.3L4.24 6.24A2 2 0 0 1 7.07 3.41l.06.06c.53.53 1.3.73 1.98.45.53-.23 1.11-.73 1.11-1.46V3a2 2 0 0 1 4 0v.07c0 .73.58 1.23 1.11 1.46.68.28 1.45.08 1.98-.45l.06-.06A2 2 0 0 1 20.59 7.1l-.06.06c-.23.68-.03 1.45.45 1.98.23.53.73 1.11 1.46 1.11H21a2 2 0 0 1 0 4h-.07c-.73 0-1.23.58-1.46 1.11-.28.68-.08 1.45.45 1.98z" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="currentColor" stroke-width="1.25"
+                stroke-linecap="round" stroke-linejoin="round" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 0 1 5.27 16.9l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09c.66 0 1.24-.38 1.51-1A1.65 1.65 0 0 0 4.3 6.3L4.24 6.24A2 2 0 0 1 7.07 3.41l.06.06c.53.53 1.3.73 1.98.45.53-.23 1.11-.73 1.11-1.46V3a2 2 0 0 1 4 0v.07c0 .73.58 1.23 1.11 1.46.68.28 1.45.08 1.98-.45l.06-.06A2 2 0 0 1 20.59 7.1l-.06.06c-.23.68-.03 1.45.45 1.98.23.53.73 1.11 1.46 1.11H21a2 2 0 0 1 0 4h-.07c-.73 0-1.23.58-1.46 1.11-.28.68-.08 1.45.45 1.98z"
+                stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
           </span>
           <span class="nav-text">Settings</span>
         </button>
         <button class="nav-item" aria-label="Help">
           <span class="nav-icon" aria-hidden="true">
             <!-- Help / question icon -->
-            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.09 9a3 3 0 1 1 5.82 1c0 1.5-2 2-2 3" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 17h.01" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9.09 9a3 3 0 1 1 5.82 1c0 1.5-2 2-2 3" stroke="currentColor" stroke-width="1.25"
+                stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M12 17h.01" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
           </span>
           <span class="nav-text">Help</span>
         </button>
@@ -145,23 +174,7 @@
         </div>
 
         <aside class="right-column">
-          <div class="card status-card">
-            <h3>Task Status</h3>
-            <div class="status-row">
-              <div class="donut-block">
-                <div class="donut" data-pct="84" data-color="#0dbb7b"></div>
-                <div class="donut-label"><strong id="pctPending">84%</strong><small>Pending</small></div>
-              </div>
-              <div class="donut-block">
-                <div class="donut" data-pct="46" data-color="#1e90ff"></div>
-                <div class="donut-label"><strong id="pctInProgress">46%</strong><small>In Progress</small></div>
-              </div>
-              <div class="donut-block">
-                <div class="donut" data-pct="13" data-color="#ff6b6b"></div>
-                <div class="donut-label"><strong id="pctNotStarted">13%</strong><small>Not Started</small></div>
-              </div>
-            </div>
-          </div>
+
 
           <div class="card completed-card">
             <h3>Completed Task</h3>
@@ -175,45 +188,47 @@
   </div>
 
   <!-- add task modal -->
-<div id="at_backdrop" class="at-backdrop" aria-hidden="true">
-  <div class="at-modal" role="dialog" aria-modal="true" aria-labelledby="at_title_lbl">
-    <div class="at-modal-inner">
-      <div class="at-modal-header">
-        <h3 id="at_title_lbl">Add New Task</h3>
-        <button id="at_close_x" class="at-close-x" aria-label="Close">&times;</button>
+  <div id="at_backdrop" class="at-backdrop" aria-hidden="true">
+    <div class="at-modal" role="dialog" aria-modal="true" aria-labelledby="at_title_lbl">
+      <div class="at-modal-inner">
+        <div class="at-modal-header">
+          <h3 id="at_title_lbl">Add New Task</h3>
+          <button id="at_close_x" class="at-close-x" aria-label="Close">&times;</button>
+        </div>
+
+        <form id="at_form" class="at-form" autocomplete="off">
+          <label class="at-label">Title
+            <input id="at_title" name="title" class="at-input" placeholder="Task title" required />
+          </label>
+
+          <div style="display:flex; gap:10px;">
+            <label class="at-label" style="flex:1">Due Date
+              <input id="at_dueDate" name="dueDate" class="at-input" type="date" />
+            </label>
+
+            <label class="at-label" style="width:160px">Priority
+              <select id="at_priority" name="priority" class="at-input">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High" selected>High</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="at-label">Task Description
+            <textarea id="at_description" name="description" class="at-textarea" rows="5"
+              placeholder="Start writing here..."></textarea>
+          </label>
+
+          <div class="at-footer">
+            <button type="button" id="at_cancel" class="btn btn-ghost">Cancel</button>
+            <button type="submit" id="at_submit" class="btn btn-primary">Done</button>
+          </div>
+        </form>
       </div>
-
-      <form id="at_form" class="at-form" autocomplete="off">
-        <label class="at-label">Title
-          <input id="at_title" name="title" class="at-input" placeholder="Task title" required />
-        </label>
-
-        <div style="display:flex; gap:10px;">
-          <label class="at-label" style="flex:1">Due Date
-            <input id="at_dueDate" name="dueDate" class="at-input" type="date" />
-          </label>
-
-          <label class="at-label" style="width:160px">Priority
-            <select id="at_priority" name="priority" class="at-input">
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High" selected>High</option>
-            </select>
-          </label>
-        </div>
-
-        <label class="at-label">Task Description
-          <textarea id="at_description" name="description" class="at-textarea" rows="5" placeholder="Start writing here..."></textarea>
-        </label>
-
-        <div class="at-footer">
-          <button type="button" id="at_cancel" class="btn btn-ghost">Cancel</button>
-          <button type="submit" id="at_submit" class="btn btn-primary">Done</button>
-        </div>
-      </form>
     </div>
   </div>
-</div>
- <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
+
 </html>
