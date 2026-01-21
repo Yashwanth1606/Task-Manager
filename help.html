@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Support</title>
+    <!-- Icons -->
+    <link href="https://unpkg.com/lucide-static/font/lucide.css" rel="stylesheet">
+    <!-- Styles -->
+    <link rel="stylesheet" href="profile.css">
+    <style>
+        .help-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .help-email {
+            font-size: 1.2rem;
+            color: #a855f7;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page">
+        <div class="card">
+            <button class="back-button" onclick="goBack()">← Back</button>
+
+            <!-- Header -->
+            <div class="card-header">
+                <div class="avatar">
+                    <i class="lucide-help-circle"></i>
+                </div>
+                <div>
+                    <h1>Help & Support</h1>
+                    <p>Need changes or upgrades?</p>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="help-content">
+                <p>If you would like to request any changes, new features, or upgrades to the application, please
+                    contact support at:</p>
+                <div class="help-email">
+                    Yashwanthu702@gmail.com
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+
+</body>
+
+</html>
