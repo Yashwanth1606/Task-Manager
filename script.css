@@ -786,7 +786,8 @@ select {
 /* -------------------------
    Add task modal (dark)
    ------------------------- */
-.at-backdrop {
+.at-backdrop,
+#tv_backdrop {
   position: fixed;
   inset: 0;
   display: none;

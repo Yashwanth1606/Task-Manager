@@ -395,6 +395,12 @@ function createTaskCard(task, showDescription = true) {
     t.classList.remove('dragging');
   });
 
+  // Double click to view details
+  t.addEventListener('dblclick', function (e) {
+    e.stopPropagation(); // prevent triggering other clicks
+    openTaskDetailModal(task);
+  });
+
   // CONTENT wrapper
   const content = document.createElement('div');
   content.className = 'content';
@@ -1033,5 +1039,56 @@ if (logoutAvatarBtn) {
     // Clear everything and redirect
     localStorage.clear();
     window.location.href = 'login.html';
+  });
+}
+
+// =========================
+// VIEW TASK DETAILS MODAL
+// =========================
+const tvBackdrop = document.getElementById('tv_backdrop');
+const tvCloseBtn = document.getElementById('tv_close_btn');
+const tvCloseX = document.getElementById('tv_close_x');
+
+function openTaskDetailModal(task) {
+  if (!tvBackdrop) return;
+
+  // Populate fields
+  document.getElementById('tv_title').textContent = task.title || '(No Title)';
+  document.getElementById('tv_description').textContent = task.description || '(No Description)';
+
+  // Priority
+  const p = (task.priority || 'Low');
+  const pEl = document.getElementById('tv_priority');
+  pEl.textContent = p;
+  // Color code priority text
+  pEl.style.color = '#fff';
+  if (p === 'High') pEl.style.color = 'var(--danger)';
+  if (p === 'Medium') pEl.style.color = 'var(--info)';
+  if (p === 'Low') pEl.style.color = 'var(--success)';
+
+  // Dates
+  const due = task.deadline ? normalizeDateString(task.deadline) : '—';
+  document.getElementById('tv_dueDate').textContent = due;
+
+  const status = task.status || 'Not Started';
+  document.getElementById('tv_status').textContent = status;
+
+  const created = task.created ? normalizeDateString(task.created) : '—';
+  document.getElementById('tv_created').textContent = created;
+
+  // Show modal
+  tvBackdrop.style.display = 'flex';
+}
+
+function closeTaskDetailModal() {
+  if (tvBackdrop) tvBackdrop.style.display = 'none';
+}
+
+if (tvCloseBtn) tvCloseBtn.addEventListener('click', closeTaskDetailModal);
+if (tvCloseX) tvCloseX.addEventListener('click', closeTaskDetailModal);
+
+if (tvBackdrop) {
+  tvBackdrop.addEventListener('click', (e) => {
+    if (e.target === tvBackdrop) closeTaskDetailModal();
   });
 }
