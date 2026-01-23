@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Task Manager — Home</title>
   <link rel="stylesheet" href="script.css" />
+  <link rel="stylesheet" href="glass.css" />
 </head>
 
 <body>
@@ -239,51 +240,45 @@
   </div>
 
   <!-- view task modal (Read Only) -->
-  <div id="tv_backdrop" class="at-backdrop" aria-hidden="true">
-    <div class="at-modal" role="dialog" aria-modal="true" aria-labelledby="tv_title_lbl">
-      <div class="at-modal-inner">
-        <div class="at-modal-header">
-          <h3 id="tv_title_lbl">Task Details</h3>
-          <button id="tv_close_x" class="at-close-x" aria-label="Close">&times;</button>
+  <!-- view task modal (Read Only) - Redesigned -->
+  <div id="tv_backdrop" class="modal-backdrop" aria-hidden="true" style="display: none;">
+    <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="tv_title">
+
+      <div class="modal-header">
+        <h2 id="tv_title" class="modal-title">Task Details</h2>
+        <button id="tv_close_x" class="modal-close" aria-label="Close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-section">
+          <label class="modal-label">Description</label>
+          <div id="tv_description" class="modal-desc-box"></div>
         </div>
 
-        <div class="at-form">
-          <label class="at-label">Title
-            <div id="tv_title" class="at-input" style="background: rgba(255,255,255,0.05); cursor: default;"></div>
-          </label>
-
-          <div style="display:flex; gap:10px;">
-            <label class="at-label" style="flex:1">Due Date
-              <div id="tv_dueDate" class="at-input" style="background: rgba(255,255,255,0.05); cursor: default;"></div>
-            </label>
-
-            <label class="at-label" style="width:160px">Priority
-              <div id="tv_priority" class="at-input" style="background: rgba(255,255,255,0.05); cursor: default;"></div>
-            </label>
+        <div class="modal-meta-grid">
+          <div class="meta-box">
+            <span class="meta-label">Priority</span>
+            <div id="tv_priority" class="meta-value badge"></div>
           </div>
-
-          <label class="at-label">Task Description
-            <div id="tv_description" class="at-textarea"
-              style="background: rgba(255,255,255,0.05); cursor: default; white-space: pre-wrap;"></div>
-          </label>
-
-          <div
-            style="display:flex; gap:10px; margin-top:10px; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
-            <label class="at-label" style="flex:1">Status
-              <div id="tv_status" class="at-input"
-                style="background: transparent; border:none; padding-left:0; color: var(--accent);"></div>
-            </label>
-            <label class="at-label" style="flex:1">Created
-              <div id="tv_created" class="at-input"
-                style="background: transparent; border:none; padding-left:0; color: var(--muted);"></div>
-            </label>
+          <div class="meta-box">
+            <span class="meta-label">Due Date</span>
+            <div id="tv_dueDate" class="meta-value"></div>
           </div>
-
-          <div class="at-footer">
-            <button type="button" id="tv_close_btn" class="btn btn-primary">Close</button>
+          <div class="meta-box">
+            <span class="meta-label">Status</span>
+            <div id="tv_status" class="meta-value"></div>
+          </div>
+          <div class="meta-box">
+            <span class="meta-label">Created</span>
+            <div id="tv_created" class="meta-value"></div>
           </div>
         </div>
       </div>
+
+      <div class="modal-footer">
+        <button type="button" id="tv_close_btn" class="btn btn-secondary">Close</button>
+      </div>
+
     </div>
   </div>
   <script src="script.js"></script>
