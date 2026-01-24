@@ -125,11 +125,47 @@ searchInput.addEventListener('input', () => {
 /* =========================
    CALENDAR FILTER
 ========================= */
-calendarBtn.onclick = () => calendarInput.click();
+calendarBtn.onclick = () => {
+  try {
+    if (calendarInput.showPicker) {
+      calendarInput.showPicker();
+    } else {
+      calendarInput.click();
+    }
+  } catch (err) {
+    console.warn('Date picker failed to open:', err);
+    // manual fallback if needed, but showPicker/click usually sufficient
+    calendarInput.style.width = 'auto';
+    calendarInput.style.height = 'auto';
+    calendarInput.style.opacity = '1';
+    calendarInput.style.position = 'relative';
+    calendarInput.focus();
+  }
+};
 
 calendarInput.onchange = () => {
-  const selected = calendarInput.value;
-  filteredTasks = allTasks.filter(t => t.date === selected);
+  const selected = calendarInput.value; // YYYY-MM-DD from input type="date"
+
+  if (!selected) {
+    // If cleared, show all
+    filteredTasks = [...allTasks];
+  } else {
+    filteredTasks = allTasks.filter(t => {
+      // robust normalize
+      if (!t.date) return false;
+      // t.date might be "YYYY-MM-DD" or something else. 
+      // let's try to normalize both to YYYY-MM-DD strings for comparison
+      const taskDate = new Date(t.date);
+      if (isNaN(taskDate.getTime())) return false;
+
+      const yyyy = taskDate.getFullYear();
+      const mm = String(taskDate.getMonth() + 1).padStart(2, '0');
+      const dd = String(taskDate.getDate()).padStart(2, '0');
+      const taskDateStr = `${yyyy}-${mm}-${dd}`;
+
+      return taskDateStr === selected;
+    });
+  }
   renderTaskList();
 };
 

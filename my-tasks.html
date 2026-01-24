@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>My Tasks</title>
@@ -9,56 +10,59 @@
   <link rel="stylesheet" href="script.css" />
   <link rel="stylesheet" href="my-tasks.css" />
 </head>
+
 <body>
 
-<script>
-  // AUTH GUARD
-  if (!localStorage.getItem('userId')) {
-    window.location.href = 'login.html';
-  }
-</script>
+  <script>
+    // AUTH GUARD
+    if (!localStorage.getItem('userId')) {
+      window.location.href = 'login.html';
+    }
+  </script>
 
-<div class="mytask-page">
+  <div class="mytask-page">
 
-  <!-- TOP BAR -->
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-color">Task</span>-Manager
-    </div>
-
-    <div class="search-area">
-      <input id="taskSearch" placeholder="Search your task here..." />
-      <button id="calendarBtn">📅</button>
-      <input type="date" id="calendarInput" hidden />
-    </div>
-
-    <div class="top-right">
-      <div class="date"></div>
-    </div>
-  </header>
-
-  <button class="back-btn" id="backBtn">← Back</button>
-
-  <!-- MAIN CONTENT -->
-  <div class="mytask-container">
-
-    <!-- LEFT -->
-    <div class="task-list-card">
-      <h3>My Tasks</h3>
-      <div id="taskList" class="task-list-scroll"></div>
-    </div>
-
-    <!-- RIGHT -->
-    <div class="task-detail-card">
-      <div id="taskDetails" class="task-details-empty">
-        Select a task to display details
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-color">Task</span>-Manager
       </div>
+
+      <div class="search-area">
+        <input id="taskSearch" placeholder="Search your task here..." />
+        <button id="calendarBtn">📅</button>
+        <input type="date" id="calendarInput"
+          style="visibility: visible; position: absolute; left: 0; top: 0; opacity: 0; width: 0; height: 0;" />
+      </div>
+
+      <div class="top-right">
+        <div class="date"></div>
+      </div>
+    </header>
+
+    <button class="back-btn" id="backBtn">← Back</button>
+
+    <!-- MAIN CONTENT -->
+    <div class="mytask-container">
+
+      <!-- LEFT -->
+      <div class="task-list-card">
+        <h3>My Tasks</h3>
+        <div id="taskList" class="task-list-scroll"></div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="task-detail-card">
+        <div id="taskDetails" class="task-details-empty">
+          Select a task to display details
+        </div>
+      </div>
+
     </div>
 
   </div>
 
-</div>
-
-<script src="my-tasks.js"></script>
+  <script src="my-tasks.js"></script>
 </body>
+
 </html>
