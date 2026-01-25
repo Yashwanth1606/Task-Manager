@@ -30,9 +30,32 @@
 
       <div class="search-area">
         <input id="taskSearch" placeholder="Search your task here..." />
-        <button id="calendarBtn">📅</button>
-        <input type="date" id="calendarInput"
-          style="visibility: visible; position: absolute; left: 0; top: 0; opacity: 0; width: 0; height: 0;" />
+        <div class="calendar-wrapper">
+          <button id="calendarBtn">📅</button>
+          <div id="calendarDropdown" class="calendar-dropdown" style="display: none;">
+            <div class="calendar-header">
+              <button id="prevMonth" class="calendar-nav">◀</button>
+              <span id="currentMonth"></span>
+              <button id="nextMonth" class="calendar-nav">▶</button>
+            </div>
+            <div class="calendar-grid">
+              <div class="calendar-weekdays">
+                <span>Su</span>
+                <span>Mo</span>
+                <span>Tu</span>
+                <span>We</span>
+                <span>Th</span>
+                <span>Fr</span>
+                <span>Sa</span>
+              </div>
+              <div id="calendarDays" class="calendar-days"></div>
+            </div>
+            <div class="calendar-footer">
+              <button id="clearDate" class="calendar-clear-btn">Clear</button>
+              <button id="todayBtn" class="calendar-today-btn">Today</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="top-right">

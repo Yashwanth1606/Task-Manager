@@ -56,11 +56,19 @@ const taskListEl = document.getElementById('taskList');
 const taskDetailsEl = document.getElementById('taskDetails');
 const searchInput = document.getElementById('taskSearch');
 const calendarBtn = document.getElementById('calendarBtn');
-const calendarInput = document.getElementById('calendarInput');
+const calendarDropdown = document.getElementById('calendarDropdown');
+const prevMonthBtn = document.getElementById('prevMonth');
+const nextMonthBtn = document.getElementById('nextMonth');
+const currentMonthEl = document.getElementById('currentMonth');
+const calendarDaysEl = document.getElementById('calendarDays');
+const clearDateBtn = document.getElementById('clearDate');
+const todayBtn = document.getElementById('todayBtn');
 const backBtn = document.getElementById('backBtn');
 
 let allTasks = [];
 let filteredTasks = [];
+let currentDate = new Date();
+let selectedDate = null;
 
 /* =========================
    LOAD TASKS
@@ -123,50 +131,159 @@ searchInput.addEventListener('input', () => {
 });
 
 /* =========================
-   CALENDAR FILTER
+   CUSTOM CALENDAR
 ========================= */
-calendarBtn.onclick = () => {
-  try {
-    if (calendarInput.showPicker) {
-      calendarInput.showPicker();
-    } else {
-      calendarInput.click();
-    }
-  } catch (err) {
-    console.warn('Date picker failed to open:', err);
-    // manual fallback if needed, but showPicker/click usually sufficient
-    calendarInput.style.width = 'auto';
-    calendarInput.style.height = 'auto';
-    calendarInput.style.opacity = '1';
-    calendarInput.style.position = 'relative';
-    calendarInput.focus();
+
+// Toggle calendar dropdown
+calendarBtn.onclick = (e) => {
+  e.stopPropagation();
+  const isVisible = calendarDropdown.style.display === 'block';
+  calendarDropdown.style.display = isVisible ? 'none' : 'block';
+  if (!isVisible) {
+    renderCalendar();
   }
 };
 
-calendarInput.onchange = () => {
-  const selected = calendarInput.value; // YYYY-MM-DD from input type="date"
-
-  if (!selected) {
-    // If cleared, show all
-    filteredTasks = [...allTasks];
-  } else {
-    filteredTasks = allTasks.filter(t => {
-      // robust normalize
-      if (!t.date) return false;
-      // t.date might be "YYYY-MM-DD" or something else. 
-      // let's try to normalize both to YYYY-MM-DD strings for comparison
-      const taskDate = new Date(t.date);
-      if (isNaN(taskDate.getTime())) return false;
-
-      const yyyy = taskDate.getFullYear();
-      const mm = String(taskDate.getMonth() + 1).padStart(2, '0');
-      const dd = String(taskDate.getDate()).padStart(2, '0');
-      const taskDateStr = `${yyyy}-${mm}-${dd}`;
-
-      return taskDateStr === selected;
-    });
+// Close calendar when clicking outside
+document.addEventListener('click', (e) => {
+  if (!calendarDropdown.contains(e.target) && e.target !== calendarBtn) {
+    calendarDropdown.style.display = 'none';
   }
+});
+
+// Prevent calendar from closing when clicking inside
+calendarDropdown.onclick = (e) => {
+  e.stopPropagation();
+};
+
+// Month navigation
+prevMonthBtn.onclick = () => {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar();
+};
+
+nextMonthBtn.onclick = () => {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar();
+};
+
+// Render calendar
+function renderCalendar() {
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  // Update header
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'];
+  currentMonthEl.textContent = `${monthNames[month]} ${year}`;
+
+  // Clear days
+  calendarDaysEl.innerHTML = '';
+
+  // Get first day of month and number of days
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+  // Add previous month's days
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const day = daysInPrevMonth - i;
+    const dayEl = createDayElement(day, true);
+    calendarDaysEl.appendChild(dayEl);
+  }
+
+  // Add current month's days
+  const today = new Date();
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayEl = createDayElement(day, false);
+
+    // Check if today
+    if (year === today.getFullYear() &&
+      month === today.getMonth() &&
+      day === today.getDate()) {
+      dayEl.classList.add('today');
+    }
+
+    // Check if selected
+    if (selectedDate &&
+      year === selectedDate.getFullYear() &&
+      month === selectedDate.getMonth() &&
+      day === selectedDate.getDate()) {
+      dayEl.classList.add('selected');
+    }
+
+    calendarDaysEl.appendChild(dayEl);
+  }
+
+  // Add next month's days to fill grid
+  const totalCells = calendarDaysEl.children.length;
+  const remainingCells = 42 - totalCells; // 6 rows * 7 days
+  for (let day = 1; day <= remainingCells; day++) {
+    const dayEl = createDayElement(day, true);
+    calendarDaysEl.appendChild(dayEl);
+  }
+}
+
+function createDayElement(day, isOtherMonth) {
+  const dayEl = document.createElement('div');
+  dayEl.className = 'calendar-day';
+  dayEl.textContent = day;
+
+  if (isOtherMonth) {
+    dayEl.classList.add('other-month');
+  } else {
+    dayEl.onclick = () => selectDate(day);
+  }
+
+  return dayEl;
+}
+
+function selectDate(day) {
+  selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+  filterTasksByDate(selectedDate);
+  renderCalendar();
+  calendarDropdown.style.display = 'none';
+}
+
+function filterTasksByDate(date) {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  const dateStr = `${yyyy}-${mm}-${dd}`;
+
+  filteredTasks = allTasks.filter(t => {
+    if (!t.date) return false;
+    const taskDate = new Date(t.date);
+    if (isNaN(taskDate.getTime())) return false;
+
+    const taskYyyy = taskDate.getFullYear();
+    const taskMm = String(taskDate.getMonth() + 1).padStart(2, '0');
+    const taskDd = String(taskDate.getDate()).padStart(2, '0');
+    const taskDateStr = `${taskYyyy}-${taskMm}-${taskDd}`;
+
+    return taskDateStr === dateStr;
+  });
+
   renderTaskList();
+}
+
+// Clear date filter
+clearDateBtn.onclick = () => {
+  selectedDate = null;
+  filteredTasks = [...allTasks];
+  renderTaskList();
+  renderCalendar();
+  calendarDropdown.style.display = 'none';
+};
+
+// Go to today
+todayBtn.onclick = () => {
+  const today = new Date();
+  currentDate = new Date(today);
+  selectedDate = new Date(today);
+  filterTasksByDate(selectedDate);
+  renderCalendar();
+  calendarDropdown.style.display = 'none';
 };
 
 /* =========================
