@@ -964,6 +964,16 @@ if (myTaskBtn) {
   });
 }
 
+// Daily Tasks navigation
+const dailyTasksBtn = document.getElementById('dailyTasksBtn');
+if (dailyTasksBtn) {
+  dailyTasksBtn.addEventListener('click', () => {
+    isInternalNavigation = true;
+    window.location.href = 'daily-tasks.html';
+  });
+}
+
+
 // =========================
 // LOGOUT ON TAB / BROWSER CLOSE
 // =========================
