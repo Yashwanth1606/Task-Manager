@@ -923,119 +923,166 @@ select {
   background: transparent
 }
 
-@media (max-width:980px) {
+/* -------------------------
+   Responsive Design Improvements
+   ------------------------- */
+
+/* Medium Screens (Tablets, small desktops) */
+@media (max-width: 980px) {
   .app {
-    grid-template-columns: clamp(90px, 22vw, 220px) 1fr;
-    padding: 12px
+    grid-template-columns: 1fr;
+    /* Single column layout */
+    height: auto;
+    overflow-y: auto;
+    padding: 10px;
   }
 
   .sidebar {
-    padding: 12px;
-    gap: 10px
+    position: fixed;
+    left: -280px;
+    /* Hide sidebar off-screen */
+    top: 0;
+    bottom: 0;
+    width: 260px;
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0;
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
   }
 
-  .avatar {
-    width: var(--avatar-size-md);
-    height: var(--avatar-size-md);
-    min-width: var(--avatar-size-md);
-    min-height: var(--avatar-size-md);
-    max-width: var(--avatar-size-md);
-    max-height: var(--avatar-size-md);
-    font-size: 14px
+  .app.sidebar-open .sidebar {
+    left: 0;
   }
 
-  .profile-info .name {
-    font-size: 16px
+  /* Backdrop for sidebar on mobile */
+  .app::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 999;
   }
 
-  .nav-item {
-    padding: 8px;
-    font-size: 14px
+  .app.sidebar-open::before {
+    opacity: 1;
+    visibility: visible;
   }
 
-  .right-column {
-    flex: 0 0 clamp(160px, 30vw, 320px)
+  .main {
+    padding: 10px;
+    width: 100%;
+    overflow: visible;
   }
 
-  .search-area input {
-    width: 160px
-  }
-}
-
-@media (max-width:520px) {
-  .app {
-    grid-template-columns: clamp(72px, 30vw, 180px) 1fr;
-    padding: 8px
-  }
-
-  .sidebar {
-    padding: 8px;
-    gap: 8px
-  }
-
-  .avatar {
-    width: var(--avatar-size-sm);
-    height: var(--avatar-size-sm);
-    min-width: var(--avatar-size-sm);
-    min-height: var(--avatar-size-sm);
-    max-width: var(--avatar-size-sm);
-    max-height: var(--avatar-size-sm);
-    font-size: 13px
-  }
-
-  .profile-info {
-    display: none
-  }
-
-  .nav {
-    align-items: center
-  }
-
-  .nav-item {
-    padding: 8px;
-    width: 44px;
-    height: 44px;
-    justify-content: center;
-    border-radius: var(--nav-radius)
-  }
-
-  .nav-item .nav-text {
-    display: none
-  }
-
-  .right-column {
-    display: flex;
-    margin-top: 18px;
-  }
-
-  .search-area input {
-    width: 120px
-  }
-}
-
-/* ensure panels share vertical space on large screens */
-@media (min-width:981px) {
-  .left-column .card.to-do .to-do-sections {
-    flex: 1;
-    overflow: auto
-  }
-
-  .right-column .status-card {
-    flex: 0 0 auto;
-    display: flex;
+  .topbar {
     flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+    padding: 15px;
   }
 
-  .right-column .status-card .status-row {
-    align-items: center
+  .search-area {
+    order: 2;
+    width: 100%;
   }
 
-  .right-column .completed-card {
-    flex: 1;
+  .search-area input {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .top-right {
+    order: 1;
     display: flex;
-    flex-direction: column
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .top-right .date {
+    position: static;
+    transform: none;
+    display: block;
+  }
+
+  .content-grid {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .right-column {
+    flex: none;
+    width: 100%;
+  }
+
+  /* Allow the page to scroll naturally on mobile */
+  body {
+    overflow: auto;
   }
 }
+
+/* Small Screens (Large Phones) */
+@media (max-width: 640px) {
+  .to-do-sections {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .tasks-section,
+  .inprogress-section,
+  .deadline-section {
+    flex: none;
+    width: 100%;
+  }
+
+  .welcome h1 {
+    font-size: 20px;
+  }
+
+  .at-modal {
+    width: 95%;
+    max-width: 400px;
+  }
+
+  /* Modal padding reduction */
+  .at-modal-inner,
+  .modal-body {
+    padding: 15px;
+  }
+
+  .modal-meta-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Very Small Screens (Narrow Phones) */
+@media (max-width: 480px) {
+  .modal-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .at-footer {
+    flex-direction: column-reverse;
+  }
+
+  .at-footer button {
+    width: 100%;
+  }
+}
+
+/* Ensure donut charts look good on small screens */
+@media (max-width: 980px) {
+  .status-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+}
+
 
 /* a11y focus outlines */
 .nav-item:focus,
@@ -1498,33 +1545,8 @@ select.at-input option:checked {
   }
 }
 
-@media (max-width: 980px) {
+/* Removed redundant media queries as they are consolidated above */
 
-  .content-grid {
-    flex-direction: column;
-    overflow: visible;
-  }
-
-  .left-column {
-    width: 100%;
-  }
-
-  .right-column {
-    width: 100%;
-    flex: none;
-  }
-}
-
-@media (max-width: 980px) {
-  body {
-    overflow-y: auto;
-  }
-
-  .app {
-    height: auto;
-    min-height: 100vh;
-  }
-}
 
 /* =========================
    Focus Page Search Support

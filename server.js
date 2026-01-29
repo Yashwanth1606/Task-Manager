@@ -7,6 +7,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from the current directory
+app.use(express.static(__dirname));
+
 
 const SHEET_ID =
   process.env.SHEET_ID ||
@@ -186,20 +189,20 @@ app.get('/tasks', async (req, res) => {
     const rows = resp.data.values || [];
 
     const tasks = rows
-  .map((r, index) => ({ row: index + 2, r })) // +2 because data starts at row 2
-  .filter(({ r }) => r[9] === userId)
-  .map(({ row, r }) => ({
-    id: row,
-    date: r[0],
-    time: r[1],
-    title: r[2],
-    description: r[3],
-    priority: r[4],
-    dueDate: r[5],
-    status: r[6],
-    started: r[7],
-    completedAt: r[8],
-  }));
+      .map((r, index) => ({ row: index + 2, r })) // +2 because data starts at row 2
+      .filter(({ r }) => r[9] === userId)
+      .map(({ row, r }) => ({
+        id: row,
+        date: r[0],
+        time: r[1],
+        title: r[2],
+        description: r[3],
+        priority: r[4],
+        dueDate: r[5],
+        status: r[6],
+        started: r[7],
+        completedAt: r[8],
+      }));
 
 
     res.json({ ok: true, tasks });

@@ -540,3 +540,79 @@
 .focus-status-btn:active:not(:disabled) {
   transform: scale(0.96);
 }
+
+/* =========================
+   Focus Page Responsiveness
+   ========================= */
+
+@media (max-width: 980px) {
+  .focus-page {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    padding: 10px;
+  }
+
+  .focus-container {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 20px;
+  }
+
+  .focus-card {
+    min-height: 400px;
+  }
+
+  .focus-ring-wrapper {
+    width: 180px;
+    height: 180px;
+  }
+
+  .focus-ring svg {
+    width: 180px;
+    height: 180px;
+  }
+
+  .focus-ring-bg,
+  .focus-ring-progress {
+    r: 80;
+    cx: 90;
+    cy: 90;
+    stroke-dasharray: 502;
+    /* approx 2*pi*80 */
+    stroke-dashoffset: 502;
+  }
+
+  .flip-unit {
+    width: 30px;
+    height: 46px;
+    font-size: 24px;
+    line-height: 46px;
+  }
+
+  .flip-top,
+  .flip-bottom {
+    line-height: 46px;
+  }
+}
+
+@media (max-width: 640px) {
+  .focus-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .focus-back-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .timer-buttons {
+    flex-direction: column;
+  }
+
+  .timer-buttons button {
+    width: 100%;
+  }
+}

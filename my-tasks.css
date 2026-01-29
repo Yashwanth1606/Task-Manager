@@ -233,3 +233,53 @@
   background: rgba(124, 58, 237, 0.3);
   border-color: var(--accent);
 }
+
+/* =========================
+   My Task Responsiveness
+   ========================= */
+
+@media (max-width: 980px) {
+  .mytask-page {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .mytask-container {
+    flex-direction: column;
+    height: auto;
+    margin-top: 60px;
+  }
+
+  .back-btn {
+    position: static;
+    margin-bottom: 20px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .task-list-card,
+  .task-detail-card {
+    flex: none;
+    width: 100%;
+    min-height: 300px;
+  }
+
+  .calendar-dropdown {
+    right: 50%;
+    transform: translateX(50%);
+    width: 90vw;
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 640px) {
+  .mytask-page {
+    padding: 10px;
+  }
+
+  .task-list-card,
+  .task-detail-card {
+    padding: 15px;
+  }
+}

@@ -474,19 +474,60 @@
 }
 
 /* Responsive */
+@media (max-width: 980px) {
+    .daily-tasks-container {
+        margin-top: 40px;
+        padding: 10px;
+    }
+
+    .tasks-header h2 {
+        font-size: 22px;
+    }
+
+    .task-grid-wrapper {
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .task-grid {
+        min-width: 700px;
+    }
+}
+
 @media (max-width: 768px) {
+    .tasks-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
+    .add-task-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 640px) {
     .task-grid {
         min-width: 600px;
     }
 
     .grid-header,
     .task-row {
-        grid-template-columns: 180px 1fr;
+        grid-template-columns: 140px 1fr;
+        gap: 8px;
     }
 
-    .tasks-header {
-        flex-direction: column;
-        gap: 16px;
-        align-items: flex-start;
+    .header-cell {
+        font-size: 11px;
+        padding: 8px;
+    }
+
+    .date-number {
+        font-size: 14px;
+    }
+
+    .task-name {
+        font-size: 14px;
     }
 }
