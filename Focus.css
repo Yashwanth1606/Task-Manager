@@ -564,23 +564,24 @@
   }
 
   .focus-ring-wrapper {
-    width: 180px;
-    height: 180px;
+    width: 100%;
+    height: auto;
+    min-height: 80px;
+    margin: 10px auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .focus-ring svg {
-    width: 180px;
-    height: 180px;
+  .focus-ring {
+    display: none;
   }
 
-  .focus-ring-bg,
-  .focus-ring-progress {
-    r: 80;
-    cx: 90;
-    cy: 90;
-    stroke-dasharray: 502;
-    /* approx 2*pi*80 */
-    stroke-dashoffset: 502;
+  .focus-ring-wrapper #timerDisplay {
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
   }
 
   .flip-unit {
