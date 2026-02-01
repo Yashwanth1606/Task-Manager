@@ -284,6 +284,19 @@ document.getElementById('pauseTimer').onclick = () => {
   timer = null;
 };
 
+document.getElementById('restartTimer').onclick = () => {
+  if (!selectedTask) {
+    alert('Select a task first');
+    return;
+  }
+  clearInterval(timer);
+  timer = null;
+  totalSeconds = Number(durationSelect.value) * 60;
+  remaining = totalSeconds;
+  updateDisplay();
+  updateRing();
+};
+
 // =========================
 // BACK TO DASHBOARD (FOCUS PAGE)
 // =========================
