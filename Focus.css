@@ -265,14 +265,13 @@
   position: relative;
   width: 36px;
   height: 54px;
-  background-color: #0b0c0e;
   border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   font-size: 32px;
   font-weight: 700;
   color: #e6eef6;
   text-align: center;
   line-height: 54px;
+  overflow: hidden;
 }
 
 /* Common card styles */
@@ -285,13 +284,15 @@
   overflow: hidden;
   background-color: #1f2125;
   /* Slightly lighter card bg */
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Top Half */
 .flip-top {
   top: 0;
   border-radius: 6px 6px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   border-bottom: 1px solid rgba(0, 0, 0, 0.8);
   /* separator line */
   line-height: 54px;
@@ -302,13 +303,13 @@
 .flip-bottom {
   bottom: 0;
   border-radius: 0 0 6px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   /* highlight */
-  line-height: 0;
-  /* tricky: pull text up to show bottom half */
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  overflow: hidden;
 }
 
 /* We need the text inside bottom to be visible. 
@@ -344,10 +345,12 @@
 
 .flip-bottom {
   background: linear-gradient(180deg, #1a1c20 0%, #2a2d33 100%);
-  display: block;
-  /* reset flex from above if needed */
-  line-height: 0;
-  /* To hide top half? No, let's use standard technique */
+  /* Trick to show bottom half: use a very large line-height 
+     to push the text down, but here flex + overflow hidden is cleaner.
+     Since we used flex-end above, we just need to ensure the text 
+     node's 'line-height' doesn't interfere. 
+  */
+  line-height: 0.8;
 }
 
 /* 
@@ -355,14 +358,7 @@
    Top half shows top of number.
    Bottom half shows bottom of number.
 */
-.flip-top {
-  line-height: 54px;
-  /* Height of the whole card */
-}
-
-.flip-bottom {
-  line-height: 0;
-}
+/* Removed redundant overrides */
 
 /* =========================
    Focus Timer Dropdown (Dark Theme)
@@ -585,15 +581,22 @@
   }
 
   .flip-unit {
-    width: 30px;
-    height: 46px;
-    font-size: 24px;
-    line-height: 46px;
+    width: 32px;
+    height: 48px;
+    font-size: 26px;
   }
 
-  .flip-top,
+  .flip-top {
+    line-height: 48px;
+    height: 50%;
+  }
+
   .flip-bottom {
-    line-height: 46px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 50%;
+    line-height: 0.8;
   }
 }
 
