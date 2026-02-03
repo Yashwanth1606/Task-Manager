@@ -90,7 +90,13 @@ async function loadTasks() {
 function renderTaskList() {
   taskListEl.innerHTML = '';
 
-  filteredTasks.forEach(task => {
+  let tasksToDisplay = filteredTasks;
+  // If mobile view (<= 980px), show only top 5 recent tasks
+  if (window.innerWidth <= 980) {
+    tasksToDisplay = filteredTasks.slice(0, 5);
+  }
+
+  tasksToDisplay.forEach(task => {
     const div = document.createElement('div');
     div.className = 'task-item';
     div.textContent = task.title;
@@ -98,6 +104,9 @@ function renderTaskList() {
     taskListEl.appendChild(div);
   });
 }
+
+// Re-render when window is resized to handle layout changes dynamically
+window.addEventListener('resize', renderTaskList);
 
 /* =========================
    TASK DETAILS
